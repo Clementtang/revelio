@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2025-02-02
+
+### Added
+
+- Source code now included in repository
+  - `src/mcp-server/`: EasyOCR MCP Server implementation
+  - `src/skill/`: Claude Code Skill definition
+- README files for each source component with installation instructions
+- Bilingual documentation (English + Traditional Chinese)
+  - `README.md` / `README.zh-TW.md`
+  - `CHANGELOG.md` / `CHANGELOG.zh-TW.md`
+
+### Changed
+
+- Updated project structure documentation
+
 ## [0.3.0] - 2025-02-02
 
 ### Changed
@@ -56,6 +72,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 | Version | Date       | Highlights                    |
 | ------- | ---------- | ----------------------------- |
+| 0.4.0   | 2025-02-02 | Source code & bilingual docs  |
 | 0.3.0   | 2025-02-02 | Configurable output directory |
 | 0.2.0   | 2025-02-02 | Privacy-first Skill mode      |
 | 0.1.0   | 2025-02-02 | Initial MCP Server            |
