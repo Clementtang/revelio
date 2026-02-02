@@ -110,13 +110,28 @@ EasyOCR 支援 80+ 種語言。若要新增，修改 `EASYOCR_LANGUAGES` 環境�
 export EASYOCR_LANGUAGES="ch_tra,en,ja"  # 新增日文
 ```
 
-## 檔案位置
+## 專案結構
 
-| 元件       | 路徑                          |
-| ---------- | ----------------------------- |
-| MCP Server | `~/.claude/easyocr-mcp/`      |
-| Skill 定義 | `~/.claude/skills/ocr-local/` |
-| OCR 結果   | `~/revelio/ocr_results/`      |
+```
+revelio/
+├── src/
+│   ├── mcp-server/      # EasyOCR MCP Server 原始碼
+│   │   ├── server.py
+│   │   ├── ocr_to_file.py
+│   │   └── pyproject.toml
+│   └── skill/           # Claude Code Skill
+│       └── SKILL.md
+├── ocr_results/         # OCR 輸出（不納入 git）
+└── docs/                # 文件
+```
+
+## 安裝位置
+
+| 元件       | 安裝路徑                      | 原始碼            |
+| ---------- | ----------------------------- | ----------------- |
+| MCP Server | `~/.claude/easyocr-mcp/`      | `src/mcp-server/` |
+| Skill 定義 | `~/.claude/skills/ocr-local/` | `src/skill/`      |
+| OCR 結果   | `~/revelio/ocr_results/`      | —                 |
 
 ## 文件
 

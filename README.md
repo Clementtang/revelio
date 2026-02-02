@@ -110,13 +110,28 @@ EasyOCR supports 80+ languages. To add more, modify the `EASYOCR_LANGUAGES` envi
 export EASYOCR_LANGUAGES="ch_tra,en,ja"  # Add Japanese
 ```
 
-## File Locations
+## Project Structure
 
-| Component   | Path                          |
-| ----------- | ----------------------------- |
-| MCP Server  | `~/.claude/easyocr-mcp/`      |
-| Skill       | `~/.claude/skills/ocr-local/` |
-| OCR Results | `~/revelio/ocr_results/`      |
+```
+revelio/
+├── src/
+│   ├── mcp-server/      # EasyOCR MCP Server source
+│   │   ├── server.py
+│   │   ├── ocr_to_file.py
+│   │   └── pyproject.toml
+│   └── skill/           # Claude Code Skill
+│       └── SKILL.md
+├── ocr_results/         # OCR output (git-ignored)
+└── docs/                # Documentation
+```
+
+## Installed Locations
+
+| Component   | Installed Path                | Source            |
+| ----------- | ----------------------------- | ----------------- |
+| MCP Server  | `~/.claude/easyocr-mcp/`      | `src/mcp-server/` |
+| Skill       | `~/.claude/skills/ocr-local/` | `src/skill/`      |
+| OCR Results | `~/revelio/ocr_results/`      | —                 |
 
 ## Documentation
 
