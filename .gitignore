@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+ENV/
+
+# uv
+.uv/
+
+# EasyOCR models (large files)
+*.pth
+*.pt
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OCR results (may contain sensitive data)
+# Uncomment if you want to exclude from version control
+# ocr_results/
