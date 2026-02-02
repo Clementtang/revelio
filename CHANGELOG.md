@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2025-02-02
+
+### Fixed
+
+- Correct skill installation path in README (`src/skill` instead of `skills/ocr-local`)
+- Align Python version requirement (>=3.11) between pyproject.toml and documentation
+- Update outdated `~/.claude/ocr_results/` paths to `~/revelio/ocr_results/` in docs
+
+### Added
+
+- LICENSE file (MIT)
+- CONTRIBUTING.md with development guidelines
+- Error handling in `ocr_to_file.py`:
+  - Validate image file exists
+  - Handle EasyOCR initialization errors
+  - Handle file write errors
+
+### Changed
+
+- Update pyproject.toml metadata (name, version, description)
+- Update minimum dependency versions (pillow, requests, numpy, mcp)
+
 ## [0.4.0] - 2025-02-02
 
 ### Added
@@ -72,6 +94,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 | Version | Date       | Highlights                    |
 | ------- | ---------- | ----------------------------- |
+| 0.4.1   | 2025-02-02 | Bug fixes & error handling    |
 | 0.4.0   | 2025-02-02 | Source code & bilingual docs  |
 | 0.3.0   | 2025-02-02 | Configurable output directory |
 | 0.2.0   | 2025-02-02 | Privacy-first Skill mode      |
