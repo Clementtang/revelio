@@ -1,7 +1,7 @@
 [project]
-name = "easyocr-test"
-version = "0.1.0"
-description = "Add your description here"
+name = "revelio"
+version = "0.4.0"
+description = "Privacy-first local OCR solution powered by EasyOCR"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
