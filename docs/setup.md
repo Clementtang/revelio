@@ -50,7 +50,7 @@ cd ~/.claude/easyocr-mcp && uv run python -c "import easyocr; print('EasyOCR OK'
 cat ~/.claude/skills/ocr-local/SKILL.md
 
 # 檢查結果目錄
-ls -la ~/.claude/ocr_results/
+ls -la ~/revelio/ocr_results/
 ```
 
 ## First Run

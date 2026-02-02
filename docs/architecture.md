@@ -56,7 +56,7 @@ Revelio 提供兩種 OCR 使用模式，讓使用者根據隱私需求選擇適�
 **功能**：
 
 - 執行本地 OCR 腳本
-- 結果存至 `~/.claude/ocr_results/`
+- 結果存至 `~/revelio/ocr_results/`
 - **不自動讀取結果**，需使用者同意
 
 **適用場景**：
