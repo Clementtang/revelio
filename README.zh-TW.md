@@ -59,7 +59,7 @@ cd ~/revelio
 4. **安裝 Skill** — 複製到 skills 目錄：
 
 ```bash
-cp -r skills/ocr-local ~/.claude/skills/
+cp -r src/skill ~/.claude/skills/ocr-local
 ```
 
 ## 使用方式
