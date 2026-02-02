@@ -33,7 +33,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 2. **下載專案**：
 
 ```bash
-git clone https://github.com/user/revelio.git ~/revelio
+git clone https://github.com/Clementtang/revelio.git ~/revelio
 cd ~/revelio
 ```
 
