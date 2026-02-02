@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-02-02
+
+### Changed
+
+- OCR results now stored in `~/revelio/ocr_results/` instead of `~/.claude/ocr_results/`
+- Output directory is configurable via `REVELIO_OUTPUT_DIR` environment variable
+- Configuration priority: CLI argument > environment variable > default
+
+### Added
+
+- `ocr_results/` directory in project folder with `.gitkeep`
+- `.gitignore` rules to exclude OCR result files (may contain sensitive data)
+
 ## [0.2.0] - 2025-02-02
 
 ### Added
@@ -41,7 +54,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Version History Summary
 
-| Version | Date       | Highlights               |
-| ------- | ---------- | ------------------------ |
-| 0.2.0   | 2025-02-02 | Privacy-first Skill mode |
-| 0.1.0   | 2025-02-02 | Initial MCP Server       |
+| Version | Date       | Highlights                    |
+| ------- | ---------- | ----------------------------- |
+| 0.3.0   | 2025-02-02 | Configurable output directory |
+| 0.2.0   | 2025-02-02 | Privacy-first Skill mode      |
+| 0.1.0   | 2025-02-02 | Initial MCP Server            |

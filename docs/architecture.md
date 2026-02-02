@@ -109,11 +109,26 @@ User: /ocr-local → Claude → Bash Script → EasyOCR → File
 │   ├── server.py          # MCP Server 主程式
 │   ├── ocr_to_file.py     # 獨立 OCR 腳本
 │   └── pyproject.toml     # Python 依賴定義
-├── skills/
-│   └── ocr-local/
-│       └── SKILL.md       # Skill 定義
-└── ocr_results/
-    └── *.txt              # OCR 輸出檔案
+└── skills/
+    └── ocr-local/
+        └── SKILL.md       # Skill 定義
+
+~/revelio/
+├── ocr_results/           # OCR 輸出檔案（預設位置）
+│   └── *.txt
+└── docs/                  # 專案文件
+```
+
+### 自訂輸出位置
+
+優先順序：CLI 參數 > `REVELIO_OUTPUT_DIR` 環境變數 > 預設值
+
+```bash
+# 方式 1: 環境變數
+export REVELIO_OUTPUT_DIR="/custom/path"
+
+# 方式 2: CLI 參數
+uv run python ocr_to_file.py image.png /custom/path
 ```
 
 ## Language Support

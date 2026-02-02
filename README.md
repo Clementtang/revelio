@@ -35,7 +35,15 @@ Claude Code 可直接呼叫 MCP 工具進行 OCR，結果會直接進入對話�
 | ---------- | ----------------------------- |
 | MCP Server | `~/.claude/easyocr-mcp/`      |
 | Skill 定義 | `~/.claude/skills/ocr-local/` |
-| OCR 結果   | `~/.claude/ocr_results/`      |
+| OCR 結果   | `~/revelio/ocr_results/`      |
+
+### 自訂輸出位置
+
+設定環境變數 `REVELIO_OUTPUT_DIR` 可自訂 OCR 結果存放位置：
+
+```bash
+export REVELIO_OUTPUT_DIR="/path/to/your/folder"
+```
 
 ## 技術棧
 

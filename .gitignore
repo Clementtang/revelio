@@ -26,5 +26,5 @@ Thumbs.db
 *.swo
 
 # OCR results (may contain sensitive data)
-# Uncomment if you want to exclude from version control
-# ocr_results/
+ocr_results/*.txt
+!ocr_results/.gitkeep
