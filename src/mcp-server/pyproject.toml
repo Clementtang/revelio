@@ -3,7 +3,7 @@ name = "easyocr-test"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.11"
 dependencies = [
     "easyocr>=1.7.2",
     "pillow>=8.0.0",
