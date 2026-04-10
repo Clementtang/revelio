@@ -4,14 +4,26 @@
 
 繁體中文 | [English](README.md)
 
-本地隱私優先的 OCR 解決方案，使用 EasyOCR 在本機執行文字辨識。所有處理都在你的裝置上完成，敏感內容絕不上傳雲端。
+本地隱私優先的文件處理工具，整合於 Claude Code。Revelio 透過 [EasyOCR](https://github.com/JaidedAI/EasyOCR) 辨識圖片文字，並透過 [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf) 解析 PDF 結構（表格、標題、閱讀順序）。所有處理都在你的裝置上完成，敏感內容絕不上傳雲端。
 
 ## 功能特色
 
-- **隱私優先** — 所有 OCR 處理在本機執行，不上傳任何資料
-- **多語言支援** — 支援繁體中文（`ch_tra`）與英文（`en`）
-- **Claude Code 整合** — 雙模式：MCP Server（快速）與 Skill（隱私）
+- **隱私優先** — 所有處理在本機執行，不上傳任何資料
+- **雙工具，單一入口** — `/revelio` skill 依副檔名自動選擇：
+  - 圖片（`.jpg`, `.png`, `.bmp`, `.tiff` 等）→ **EasyOCR**
+  - PDF（`.pdf`）→ **opendataloader-pdf**（保留表格、標題、閱讀順序）
+- **手動指定** — 使用 `--ocr` 或 `--pdf` 強制指定工具
 - **使用者掌控** — Skill 模式下，由你決定是否讓 Claude 讀取結果
+- **多語言支援** — 預設繁體中文 + 英文，兩個工具都支援 80+ 種語言
+
+## 背景
+
+Revelio 起始於 2026 年初，原本只是一個本地 EasyOCR 的封裝，用於處理敏感圖片的 OCR。2026 年 4 月擴充了 PDF 處理能力，起因是 OCR 在處理結構化文件（財報、研究報告、合約）時有其極限 — OCR 會把表格攤平成純文字、數字欄位錯位，而 opendataloader-pdf 直接解析 PDF 結構，保留表格與數字精準度。
+
+兩個工具互補而非互斥：
+
+- **EasyOCR**（透過 `src/mcp-server/`）— 處理圖片與截圖中的文字
+- **opendataloader-pdf**（外部工具，由 skill 呼叫）— 原生 PDF 解析，掃描件可啟用 hybrid OCR
 
 ## 快速開始
 
@@ -21,117 +33,134 @@
 - Python 3.11+
 - [uv](https://github.com/astral-sh/uv)（Python 套件管理器）
 - [Claude Code](https://claude.ai/code) CLI
+- **Java 11+**（opendataloader-pdf 需要）
 
 ### 安裝步驟
 
 1. **安裝 uv**（若尚未安裝）：
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+   ```bash
+   curl -LsSf https://astral.sh/uv/install.sh | sh
+   ```
 
 2. **下載專案**：
 
-```bash
-git clone https://github.com/Clementtang/revelio.git ~/revelio
-cd ~/revelio
-```
+   ```bash
+   git clone https://github.com/Clementtang/revelio.git ~/revelio
+   cd ~/revelio
+   ```
 
-3. **設定 Claude Code** — 在 `~/.claude/settings.json` 中加入 MCP Server：
+3. **設定 EasyOCR MCP server** — 在 `~/.claude.json` 的 `mcpServers` 中加入：
 
-```json
-{
-  "mcpServers": {
-    "easyocr": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "~/.claude/easyocr-mcp",
-        "python",
-        "server.py"
-      ]
-    }
-  }
-}
-```
+   ```json
+   {
+     "mcpServers": {
+       "revelio": {
+         "command": "uv",
+         "args": [
+           "--directory",
+           "/Users/<你>/revelio/src/mcp-server",
+           "run",
+           "server.py"
+         ],
+         "env": {
+           "EASYOCR_LANGUAGES": "ch_tra,en"
+         }
+       }
+     }
+   }
+   ```
 
-4. **安裝 Skill** — 複製到 skills 目錄：
+4. **安裝 Skill**：
 
-```bash
-cp -r src/skill ~/.claude/skills/ocr-local
-```
+   ```bash
+   cp -r src/skill ~/.claude/skills/revelio
+   ```
+
+5. **安裝 opendataloader-pdf**（PDF 功能需要）：
+
+   ```bash
+   python3 -m venv ~/odl-env
+   source ~/odl-env/bin/activate
+   pip install -U "opendataloader-pdf[hybrid]"
+   ```
 
 ## 使用方式
 
-### 模式一：`/ocr-local` Skill（隱私模式）
+### `/revelio` Skill — 統一入口
 
-適合處理敏感文件。結果儲存在本地，只有經過你明確同意，Claude 才會讀取。
+在 Claude Code 中直接呼叫，skill 會自動判斷：
 
 ```
-你：/ocr-local
-Claude：請提供要辨識的圖片路徑。
-你：~/Documents/contract.jpg
-Claude：✓ 辨識完成，結果已存至 ~/revelio/ocr_results/...
+你：/revelio ~/Documents/receipt.jpg
+Claude：[自動選擇 EasyOCR] 正在執行本地 OCR...
+        結果已存至 ~/revelio/ocr_results/receipt_<時間戳>.txt
         是否要讓我讀取內容？
-你：是 / 否
+
+你：/revelio ~/reports/財務報告.pdf
+Claude：[自動選擇 opendataloader-pdf] 正在轉換 PDF...
+        結果已存至 ~/odl-output/財務報告/
+        是否要讓我讀取內容？
+
+你：/revelio --ocr ~/scanned_page.png
+Claude：[強制使用 EasyOCR] 正在執行本地 OCR...
 ```
 
-### 模式二：MCP Server（快速模式）
+結果儲存在本地，只有經過你明確同意，Claude 才會讀取。
 
-適合一般用途。Claude 直接取得 OCR 結果，可立即協助處理。
+### MCP Server — 直接處理圖片 OCR
 
-當你要求 Claude 辨識圖片中的文字時，它會自動使用 MCP 工具。
+若是非敏感圖片，Claude 可以直接呼叫 MCP 工具，跳過隱私確認流程。只要請 Claude 讀取圖片中的文字即可。
 
 ## 設定選項
 
 ### 輸出目錄
 
-預設：`~/revelio/ocr_results/`
+| 工具               | 預設輸出位置             |
+| ------------------ | ------------------------ |
+| EasyOCR            | `~/revelio/ocr_results/` |
+| opendataloader-pdf | `~/odl-output/`          |
 
-透過環境變數自訂：
+EasyOCR 可透過環境變數自訂：
 
 ```bash
 export REVELIO_OUTPUT_DIR="/你的/自訂/路徑"
 ```
 
-優先順序：CLI 參數 > 環境變數 > 預設值
-
 ### 支援語言
 
-目前設定：
-
-- 繁體中文（`ch_tra`）
-- 英文（`en`）
-
-EasyOCR 支援 80+ 種語言。若要新增，修改 `EASYOCR_LANGUAGES` 環境變數：
+預設：繁體中文（`ch_tra`）+ 英文（`en`）。EasyOCR 支援 80+ 種語言，透過 `EASYOCR_LANGUAGES` 設定：
 
 ```bash
-export EASYOCR_LANGUAGES="ch_tra,en,ja"  # 新增日文
+export EASYOCR_LANGUAGES="ch_tra,en,ja"
 ```
+
+opendataloader-pdf 的 hybrid 模式同樣支援 80+ 種 OCR 語言。
 
 ## 專案結構
 
 ```
 revelio/
 ├── src/
-│   ├── mcp-server/      # EasyOCR MCP Server 原始碼
+│   ├── mcp-server/      # EasyOCR MCP server
 │   │   ├── server.py
 │   │   ├── ocr_to_file.py
 │   │   └── pyproject.toml
-│   └── skill/           # Claude Code Skill
+│   └── skill/           # /revelio skill（路由至 OCR 或 PDF 工具）
 │       └── SKILL.md
-├── ocr_results/         # OCR 輸出（不納入 git）
-└── docs/                # 文件
+├── ocr_results/         # EasyOCR 輸出（不納入 git）
+└── docs/                # 文件（架構、ADR）
 ```
 
 ## 安裝位置
 
-| 元件       | 安裝路徑                      | 原始碼            |
-| ---------- | ----------------------------- | ----------------- |
-| MCP Server | `~/.claude/easyocr-mcp/`      | `src/mcp-server/` |
-| Skill 定義 | `~/.claude/skills/ocr-local/` | `src/skill/`      |
-| OCR 結果   | `~/revelio/ocr_results/`      | —                 |
+| 元件                    | 安裝路徑                               | 原始碼                                   |
+| ----------------------- | -------------------------------------- | ---------------------------------------- |
+| MCP server              | 直接引用自 `~/revelio/src/mcp-server/` | `src/mcp-server/`                        |
+| Skill                   | `~/.claude/skills/revelio/`            | `src/skill/`                             |
+| OCR 結果                | `~/revelio/ocr_results/`               | —                                        |
+| PDF 輸出                | `~/odl-output/`                        | —                                        |
+| opendataloader-pdf venv | `~/odl-env/`                           | `pip install opendataloader-pdf[hybrid]` |
 
 ## 文件
 
@@ -143,12 +172,18 @@ revelio/
 ## 技術棧
 
 - **OCR 引擎**：[EasyOCR](https://github.com/JaidedAI/EasyOCR)
+- **PDF 解析器**：[opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf)（需要 Java 11+）
 - **Python 執行環境**：[uv](https://github.com/astral-sh/uv)
 - **整合平台**：Claude Code（MCP 協議 + Skills）
 
+## 歷程
+
+- **2026-04** — 整合 PDF 處理功能（opendataloader-pdf）；skill 從 `/ocr-local` 改名為 `/revelio`，MCP server 從 `easyocr` 改名為 `revelio`
+- **2026-02** — 曾嘗試向 [WindoC/easyocr-mcp](https://github.com/WindoC/easyocr-mcp) 提交 upstream 貢獻（討論停滯）。[Clementtang/easyocr-mcp fork](https://github.com/Clementtang/easyocr-mcp) 已封存，Revelio 自行維護 MCP server 實作。詳見 [ADR-002](docs/decisions/002-memory-management-strategy.md)。
+
 ## 為什麼叫「Revelio」？
 
-在哈利波特的世界中，_Revelio_（顯形咒）是一個用於揭示隱藏物品、秘密訊息和隱形事物的咒語。這個專案做的事情一樣 — 揭示圖片中隱藏的文字，同時保護你的敏感內容隱私。
+在哈利波特的世界中，_Revelio_（顯形咒）是一個用於揭示隱藏物品、秘密訊息和隱形事物的咒語。這個專案做的事情一樣 — 揭示文件中隱藏的文字與結構，同時保護你的敏感內容隱私。
 
 ## 授權
 
@@ -156,4 +191,4 @@ MIT
 
 ## 貢獻
 
-歡迎貢獻！請先閱讀[架構說明](docs/architecture.md)文件，了解雙模式設計的理念。
+歡迎貢獻。請先閱讀[架構說明](docs/architecture.md)文件，了解設計理念。
