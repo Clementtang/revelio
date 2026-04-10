@@ -1,44 +1,77 @@
 ---
-name: ocr-local
-description: 執行本地隱私 OCR，使用 EasyOCR 辨識圖片文字而不上傳至雲端。支援繁體中文與英文。
+name: revelio
+description: 本地文件處理 — 自動依副檔名選擇 EasyOCR（圖片）或 opendataloader-pdf（PDF），也可手動指定。支援繁體中文與英文。
 ---
 
-# 本地隱私 OCR
+# Revelio — 本地文件處理
 
-此 skill 使用本地 EasyOCR 進行圖片文字辨識，**所有處理都在本機完成**，不會將圖片內容上傳至任何雲端服務。
+統一入口，自動判斷工具：
+
+| 輸入類型                                   | 工具               | 輸出位置                 |
+| ------------------------------------------ | ------------------ | ------------------------ |
+| 圖片（`.jpg`, `.png`, `.bmp`, `.tiff` 等） | EasyOCR            | `~/revelio/ocr_results/` |
+| PDF（`.pdf`）                              | opendataloader-pdf | `~/odl-output/`          |
+
+使用者可透過參數強制指定：`--ocr` 強制用 EasyOCR，`--pdf` 強制用 opendataloader-pdf。
 
 ## 隱私說明
 
-- 圖片由本機 EasyOCR 模型處理
-- OCR 結果存放於 `~/revelio/ocr_results/`（可透過 `REVELIO_OUTPUT_DIR` 環境變數自訂）
+- 所有處理都在本機完成，不上傳至雲端
 - **預設不會讓 Claude 讀取結果**，除非使用者明確同意
 
 ## 工作流程
 
-### 步驟 1：取得圖片路徑
+### 步驟 1：取得檔案路徑
 
-詢問使用者要辨識的圖片檔案路徑。支援格式：PNG、JPG、JPEG、BMP、TIFF 等常見圖片格式。
+詢問使用者要處理的檔案路徑（如未提供）。
 
-### 步驟 2：執行本地 OCR
+### 步驟 2：判斷工具
 
-使用以下指令執行 OCR（繁體中文 + 英文）：
+依以下優先順序判斷：
+
+1. 使用者指定 `--ocr` 或 `--pdf` → 依指定
+2. 副檔名為 `.pdf` → opendataloader-pdf
+3. 副檔名為圖片格式 → EasyOCR
+4. 無法判斷 → 詢問使用者
+
+### 步驟 3：執行處理
+
+#### 路徑 A：EasyOCR（圖片）
 
 ```bash
-cd ~/.claude/easyocr-mcp && uv run python ocr_to_file.py "<image_path>"
+cd ~/revelio/src/mcp-server && uv run python ocr_to_file.py "<image_path>"
 ```
 
-### 步驟 3：回報結果位置
+結果存放：`~/revelio/ocr_results/`
 
-告知使用者：
+#### 路徑 B：opendataloader-pdf（PDF）
 
-- OCR 執行成功/失敗
-- 結果檔案的完整路徑
+```bash
+source ~/odl-env/bin/activate && python3 -c "
+import opendataloader_pdf
+opendataloader_pdf.convert(
+    input_path=['<pdf_path>'],
+    output_dir='<output_dir>',
+    format='markdown,json'
+)
+"
+```
 
-### 步驟 4：詢問是否讀取（關鍵隱私步驟）
+輸出資料夾命名慣例：`~/odl-output/<公司名-代號>/<期間-類型>/`
+
+若無法從檔名推斷公司與期間結構，直接以檔名建立子資料夾：`~/odl-output/<檔名>/`
+
+**PDF 轉換注意事項：**
+
+- 掃描件加 `--force-ocr`（在 Python 中對應 `force_ocr=True`）
+- 中文文件加 `ocr_lang="zh,en"`
+- 轉換後建議人工抽查表格數字正確性
+
+### 步驟 4：回報結果並詢問是否讀取（關鍵隱私步驟）
 
 **必須明確詢問使用者**：
 
-> OCR 結果已儲存至 `<output_path>`
+> 處理完成，結果已儲存至 `<output_path>`
 >
 > 是否要讓 Claude 讀取內容以協助後續處理？
 >
@@ -50,28 +83,22 @@ cd ~/.claude/easyocr-mcp && uv run python ocr_to_file.py "<image_path>"
 ## 使用範例
 
 ```
-使用者：/ocr-local
-Claude：請提供要辨識的圖片路徑。
+使用者：/revelio ~/Documents/receipt.jpg
+Claude：[自動選擇 EasyOCR] 正在執行本地 OCR...
+       結果已存至 ~/revelio/ocr_results/receipt_20240101_120000.txt
+       是否要讓 Claude 讀取內容？
 
-使用者：~/Documents/receipt.jpg
-Claude：正在執行本地 OCR...
-       ✓ 辨識完成，結果已存至 ~/.claude/ocr_results/receipt_20240101_120000.txt
+使用者：/revelio ~/reports/財報.pdf
+Claude：[自動選擇 opendataloader-pdf] 正在轉換 PDF...
+       結果已存至 ~/odl-output/財報/財報.md
+       是否要讓 Claude 讀取內容？
 
-       是否要讓 Claude 讀取內容以協助後續處理？
-
-使用者：好
-Claude：[讀取檔案並協助處理]
+使用者：/revelio --ocr ~/scanned.pdf
+Claude：[強制使用 EasyOCR] 正在執行本地 OCR...
 ```
 
 ## 支援語言
 
-- 繁體中文 (ch_tra)
+- 繁體中文 (ch_tra / zh)
 - 英文 (en)
-
-## 結果存放位置
-
-預設：`~/revelio/ocr_results/`
-
-自訂方式：設定環境變數 `REVELIO_OUTPUT_DIR`
-
-檔案命名格式：`ocr_<原檔名>_<時間戳記>.txt`
+- EasyOCR 支援 80+ 語言，opendataloader-pdf hybrid mode 同樣支援
