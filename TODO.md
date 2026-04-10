@@ -49,6 +49,9 @@
 
 ## Future Improvements
 
-- [ ] 評估是否將 revelio 的 MCP server 改為依賴 WindoC/easyocr-mcp
 - [ ] 在 README 說明 EasyOCR MCP 的來源與授權
-- [ ] 同步上游 LICENSE (Apache 2.0) 到 fork
+
+## 已廢止
+
+- ~~評估是否將 revelio 的 MCP server 改為依賴 WindoC/easyocr-mcp~~ — Revelio 自行維護 MCP server，不依賴上游
+- ~~同步上游 LICENSE (Apache 2.0) 到 fork~~ — fork 已封存，不再維護
