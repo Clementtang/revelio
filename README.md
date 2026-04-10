@@ -1,5 +1,11 @@
 # Revelio
 
+![License](https://img.shields.io/github/license/Clementtang/revelio)
+![Top Language](https://img.shields.io/github/languages/top/Clementtang/revelio)
+![Last Commit](https://img.shields.io/github/last-commit/Clementtang/revelio)
+![Python](https://img.shields.io/badge/python-3.11+-blue)
+![Java](https://img.shields.io/badge/java-11+-orange)
+
 > _Revelio_ — the Revealing Charm from Harry Potter, used to reveal hidden things.
 
 [繁體中文](README.zh-TW.md) | English
