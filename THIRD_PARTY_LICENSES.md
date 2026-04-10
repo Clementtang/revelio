@@ -105,6 +105,16 @@ copies of the Software.
 
 ---
 
+## EasyOCR MCP Server (Code Reference)
+
+- **Repository**: https://github.com/WindoC/easyocr-mcp
+- **License**: Apache License 2.0
+- **Note**: The MCP server implementation in `src/mcp-server/server.py` is based on this project.
+
+License confirmed on 2025-02-03 via https://github.com/WindoC/easyocr-mcp/issues/1
+
+---
+
 ## PyTorch (Transitive Dependency)
 
 EasyOCR depends on PyTorch:
