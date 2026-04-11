@@ -125,15 +125,32 @@ EasyOCR depends on PyTorch:
 
 ---
 
+## opendataloader-pdf (External Tool, Not Bundled)
+
+- **Repository**: https://github.com/opendataloader-project/opendataloader-pdf
+- **License**: Apache License 2.0
+- **Usage**: Invoked as an external subprocess from the `/revelio` skill for PDF parsing. Users install it independently into their own Python venv (`~/odl-env/`) — Revelio does not bundle, redistribute, or modify this project's code. This listing is provided for transparency and attribution.
+
+```
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+```
+
+---
+
 ## Summary
 
-| Library  | License      | Compatibility    |
-| -------- | ------------ | ---------------- |
-| EasyOCR  | Apache 2.0   | ✓ MIT-compatible |
-| NumPy    | BSD 3-Clause | ✓ MIT-compatible |
-| Pillow   | HPND         | ✓ MIT-compatible |
-| Requests | Apache 2.0   | ✓ MIT-compatible |
-| MCP      | MIT          | ✓ MIT-compatible |
-| PyTorch  | BSD 3-Clause | ✓ MIT-compatible |
+| Library            | License      | Integration           | Compatibility    |
+| ------------------ | ------------ | --------------------- | ---------------- |
+| EasyOCR            | Apache 2.0   | Python dependency     | ✓ MIT-compatible |
+| NumPy              | BSD 3-Clause | Python dependency     | ✓ MIT-compatible |
+| Pillow             | HPND         | Python dependency     | ✓ MIT-compatible |
+| Requests           | Apache 2.0   | Python dependency     | ✓ MIT-compatible |
+| MCP                | MIT          | Python dependency     | ✓ MIT-compatible |
+| PyTorch            | BSD 3-Clause | Transitive dependency | ✓ MIT-compatible |
+| opendataloader-pdf | Apache 2.0   | External subprocess   | ✓ MIT-compatible |
 
-All dependencies are compatible with this project's MIT License.
+All dependencies and external tools are compatible with this project's MIT License.
