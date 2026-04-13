@@ -48,14 +48,25 @@ cd ~/revelio/src/mcp-server && uv run python ocr_to_file.py "<image_path>"
 
 **步驟 B-1：啟動 hybrid server（若尚未運行）**
 
+英文 PDF（標準字型）：
+
 ```bash
 source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 &
+```
+
+中文 PDF（或出現「glyph can not be mapped to Unicode」警告時）：
+
+```bash
+source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 --force-ocr --ocr-lang "ch_tra,en" &
 ```
 
 等待 server 輸出 `Uvicorn running on http://0.0.0.0:5002` 後再繼續。
 初次啟動約需 30-40 秒（載入 DocumentConverter）。
 
 確認 server 已啟動：`lsof -i :5002 | grep LISTEN`
+
+> 判斷依據：如果 PDF 檔名或內容明顯為中文，直接用 `--force-ocr --ocr-lang` 版本啟動。
+> 如果不確定，先用標準模式試轉，若輸出缺少中文字（只有數字和代碼），改用 force-ocr 版本重試。
 
 **步驟 B-2：轉換 PDF（hybrid mode）**
 

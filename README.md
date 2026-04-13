@@ -48,7 +48,22 @@ Below is a real output from [TSMC's 2025 Q3 Consolidated Financial Statements](h
 | INCOME TAX EXPENSE         | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
 | NET INCOME                 | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
 
-> Note: Hybrid mode (`--hybrid docling-fast --hybrid-mode full`) is required for borderless financial tables. The basic mode flattens these into unstructured paragraph text.
+**Chinese income statement** — same report, Chinese version. Some CJK PDFs embed fonts without Unicode mappings (CID-keyed fonts missing ToUnicode CMap), making text-based extraction impossible. Adding `--force-ocr --ocr-lang "ch_tra,en"` to the hybrid server falls back to visual OCR, recovering Chinese text with minor recognition artifacts:
+
+| Code | Item         | 2025 Q3 Amount | %   | 2024 Q3 Amount | %   | 2025 9M Amount  | %   | 2024 9M Amount  | %   |
+| ---- | ------------ | -------------- | --- | -------------- | --- | --------------- | --- | --------------- | --- |
+| 4000 | 營業收入淨額 | 989,918,318    | 100 | 759,692,143    | 100 | $ 2,762,963,851 | 100 | $ 2,025,846,521 | 100 |
+| 5000 | 營業成本     | 401,375,489    | 41  | 320,346,477    | 42  | 1,133,656,708   | 41  | 913,871,108     | 45  |
+|      | 營業毛利     | 588,542,829    | 59  | 439,345,666    | 58  | 1,629,307,143   | 59  | 1,111,975,413   | 55  |
+| 6300 | 研究發展費用 | 63,742,245     | 6   | 52,783,826     | 7   | 181,569,457     | 7   | 146,950,466     | 7   |
+| 6100 | 行銷費用     | 3,973,966      | -   | 3,404,487      | 1   | 12,002,028      | -   | 9,463,070       | 1   |
+| 6000 | 合計         | 87,764,445     | 8   | 79,078,904     | 11  | 257,458,840     | 9   | 214,731,495     | 11  |
+| 6900 | 營業淨利     | 500,684,818    | 51  | 360,766,289    | 47  | 1,371,189,264   | 50  | 896,340,137     | 44  |
+| 7900 | 稅前淨利     | 525,369,023    | 53  | 384,186,852    | 51  | 1,449,299,639   | 52  | 957,040,631     | 47  |
+| 7950 | 所得稅費用   | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
+| 8200 | 本期淨利     | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
+
+> **Why different modes?** The English PDF uses standard fonts with Unicode mappings — hybrid mode extracts text directly from the PDF structure. The Chinese PDF uses CID-keyed fonts without ToUnicode CMap, so the text layer is unreadable. Adding `--force-ocr --ocr-lang "ch_tra,en"` to the hybrid server makes it fall back to visual OCR, reading the rendered page as an image. This produces minor OCR artifacts (e.g., `二十` misread as `二+`) but successfully recovers the content.
 
 ## Quick Start
 
