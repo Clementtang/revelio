@@ -184,37 +184,25 @@ revelio/
 
 ## Example Output
 
-Below is a real output from [TSMC's 2025 Q3 Consolidated Financial Statements](https://investor.tsmc.com/english/quarterly-results/2025/q3) (public filing), converted by opendataloader-pdf.
+Below is a real output from [TSMC's 2025 Q3 Consolidated Financial Statements](https://investor.tsmc.com/english/quarterly-results/2025/q3) (public filing), converted by opendataloader-pdf in **hybrid mode**.
 
-**Income statement** — numbers and reading order are preserved accurately. Main financial statements are rendered as structured text, optimized for LLM consumption rather than visual rendering:
+**Income statement** — converted into a structured Markdown table with accurate numbers and proper column separation:
 
-```
-NET REVENUE $ 989,918,318 100 $ 759,692,143 100 $ 2,762,963,851 100 $ 2,025,846,521 100
+|                            | 2025 Q3 Amount | %   | 2024 Q3 Amount | %   | 2025 9M Amount  | %   | 2024 9M Amount  | %   |
+| -------------------------- | -------------- | --- | -------------- | --- | --------------- | --- | --------------- | --- |
+| NET REVENUE                | $ 989,918,318  | 100 | $ 759,692,143  | 100 | $ 2,762,963,851 | 100 | $ 2,025,846,521 | 100 |
+| COST OF REVENUE            | 401,375,489    | 41  | 320,346,477    | 42  | 1,133,656,708   | 41  | 913,871,108     | 45  |
+| GROSS PROFIT               | 588,542,829    | 59  | 439,345,666    | 58  | 1,629,307,143   | 59  | 1,111,975,413   | 55  |
+| Research and development   | 63,742,245     | 6   | 52,783,826     | 7   | 181,569,457     | 7   | 146,950,466     | 7   |
+| General and administrative | 20,048,234     | 2   | 22,890,591     | 3   | 63,887,355      | 2   | 58,317,959      | 3   |
+| Marketing                  | 3,973,966      | -   | 3,404,487      | 1   | 12,002,028      | -   | 9,463,070       | 1   |
+| Total operating expenses   | 87,764,445     | 8   | 79,078,904     | 11  | 257,458,840     | 9   | 214,731,495     | 11  |
+| INCOME FROM OPERATIONS     | 500,684,818    | 51  | 360,766,289    | 47  | 1,371,189,264   | 50  | 896,340,137     | 44  |
+| INCOME BEFORE INCOME TAX   | 525,369,023    | 53  | 384,186,852    | 51  | 1,449,299,639   | 52  | 957,040,631     | 47  |
+| INCOME TAX EXPENSE         | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
+| NET INCOME                 | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
 
-COST OF REVENUE 401,375,489 41 320,346,477 42 1,133,656,708 41 913,871,108 45
-
-GROSS PROFIT 588,542,829 59 439,345,666 58 1,629,307,143 59 1,111,975,413 55
-
-OPERATING EXPENSES
-Research and development 63,742,245 6 52,783,826 7 181,569,457 7 146,950,466 7
-General and administrative 20,048,234 2 22,890,591 3 63,887,355 2 58,317,959 3
-Marketing 3,973,966 - 3,404,487 1 12,002,028 - 9,463,070 1
-Total operating expenses 87,764,445 8 79,078,904 11 257,458,840 9 214,731,495 11
-
-INCOME FROM OPERATIONS 500,684,818 51 360,766,289 47 1,371,189,264 50 896,340,137 44
-
-INCOME BEFORE INCOME TAX 525,369,023 53 384,186,852 51 1,449,299,639 52 957,040,631 47
-INCOME TAX EXPENSE 73,613,661 7 59,106,682 8 239,318,192 8 159,077,760 8
-NET INCOME 451,755,362 46 325,080,170 43 1,209,981,447 44 797,962,871 39
-```
-
-**Supplementary schedules** — footnote tables are converted into proper Markdown tables:
-
-| TSMC's TSR relative to the TSR of S&P 500 IT Index | Ratio of Shares to be Vested              |
-| -------------------------------------------------- | ----------------------------------------- |
-| Above the Index by X percentage points             | 50% + X \* 2.5%, with the maximum of 100% |
-| Equal to the Index                                 | 50%                                       |
-| Below the Index by X percentage points             | 50% - X \* 2.5%, with the minimum of 0%   |
+> Note: Hybrid mode (`--hybrid docling-fast --hybrid-mode full`) is required for borderless financial tables. The basic mode flattens these into unstructured paragraph text.
 
 ## History
 

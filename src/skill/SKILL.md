@@ -46,13 +46,29 @@ cd ~/revelio/src/mcp-server && uv run python ocr_to_file.py "<image_path>"
 
 #### 路徑 B：opendataloader-pdf（PDF）
 
+**步驟 B-1：啟動 hybrid server（若尚未運行）**
+
+```bash
+source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 &
+```
+
+等待 server 輸出 `Uvicorn running on http://0.0.0.0:5002` 後再繼續。
+初次啟動約需 30-40 秒（載入 DocumentConverter）。
+
+確認 server 已啟動：`lsof -i :5002 | grep LISTEN`
+
+**步驟 B-2：轉換 PDF（hybrid mode）**
+
 ```bash
 source ~/odl-env/bin/activate && python3 -c "
 import opendataloader_pdf
 opendataloader_pdf.convert(
     input_path=['<pdf_path>'],
     output_dir='<output_dir>',
-    format='markdown,json'
+    format='markdown,json',
+    hybrid='docling-fast',
+    hybrid_mode='full',
+    hybrid_url='http://localhost:5002'
 )
 "
 ```
@@ -63,9 +79,11 @@ opendataloader_pdf.convert(
 
 **PDF 轉換注意事項：**
 
-- 掃描件加 `--force-ocr`（在 Python 中對應 `force_ocr=True`）
+- **必須使用 hybrid mode** — 基本模式無法正確處理無邊框表格（如財務報表）
+- 掃描件額外加 `force_ocr=True`
 - 中文文件加 `ocr_lang="zh,en"`
 - 轉換後建議人工抽查表格數字正確性
+- 處理完畢後可用 `kill %1` 或 `kill $(lsof -t -i :5002)` 關閉 hybrid server
 
 ### 步驟 4：回報結果並詢問是否讀取（關鍵隱私步驟）
 
