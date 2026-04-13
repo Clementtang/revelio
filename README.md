@@ -1,3 +1,5 @@
+<div align="center">
+
 # Revelio
 
 ![License](https://img.shields.io/github/license/Clementtang/revelio)
@@ -10,7 +12,11 @@
 
 [繁體中文](README.zh-TW.md) | English
 
-A privacy-first local document processing toolkit for Claude Code. Revelio extracts text from images via [EasyOCR](https://github.com/JaidedAI/EasyOCR) and parses PDFs (tables, headings, reading order) via [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf). All processing runs on your machine — sensitive content never leaves your device.
+</div>
+
+In the Harry Potter universe, _Revelio_ is a charm that reveals hidden objects, secret messages, and invisible things. This project does the same — it reveals the hidden text and structure within documents, while keeping your sensitive content private.
+
+A privacy-first local document processing toolkit for [Claude Code](https://claude.ai/code). Revelio extracts text from images via [EasyOCR](https://github.com/JaidedAI/EasyOCR) and parses PDFs (tables, headings, reading order) via [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf). All processing runs on your machine — sensitive content never leaves your device.
 
 ## Features
 
@@ -22,14 +28,27 @@ A privacy-first local document processing toolkit for Claude Code. Revelio extra
 - **User Control** — In Skill mode, you decide if Claude can read the results
 - **Multi-language** — Traditional Chinese + English by default; both tools support 80+ languages
 
-## Background
+## Example Output
 
-Revelio started in early 2026 as a local EasyOCR wrapper for sensitive image OCR. In April 2026 it was extended to cover PDF processing after running into the limits of OCR on structured documents like financial reports, research papers, and contracts. OCR flattens tables into plain text and garbles numeric columns — opendataloader-pdf parses the PDF structure directly, preserving table layouts and numeric precision.
+Below is a real output from [TSMC's 2025 Q3 Consolidated Financial Statements](https://investor.tsmc.com/english/quarterly-results/2025/q3) (public filing), converted by opendataloader-pdf in **hybrid mode**.
 
-The two tools are complementary, not competing:
+**Income statement** — converted into a structured Markdown table with accurate numbers and proper column separation:
 
-- **EasyOCR** (via `src/mcp-server/`) — image and screenshot text extraction
-- **opendataloader-pdf** (external, invoked by the skill) — native PDF parsing with optional hybrid OCR for scanned PDFs
+|                            | 2025 Q3 Amount | %   | 2024 Q3 Amount | %   | 2025 9M Amount  | %   | 2024 9M Amount  | %   |
+| -------------------------- | -------------- | --- | -------------- | --- | --------------- | --- | --------------- | --- |
+| NET REVENUE                | $ 989,918,318  | 100 | $ 759,692,143  | 100 | $ 2,762,963,851 | 100 | $ 2,025,846,521 | 100 |
+| COST OF REVENUE            | 401,375,489    | 41  | 320,346,477    | 42  | 1,133,656,708   | 41  | 913,871,108     | 45  |
+| GROSS PROFIT               | 588,542,829    | 59  | 439,345,666    | 58  | 1,629,307,143   | 59  | 1,111,975,413   | 55  |
+| Research and development   | 63,742,245     | 6   | 52,783,826     | 7   | 181,569,457     | 7   | 146,950,466     | 7   |
+| General and administrative | 20,048,234     | 2   | 22,890,591     | 3   | 63,887,355      | 2   | 58,317,959      | 3   |
+| Marketing                  | 3,973,966      | -   | 3,404,487      | 1   | 12,002,028      | -   | 9,463,070       | 1   |
+| Total operating expenses   | 87,764,445     | 8   | 79,078,904     | 11  | 257,458,840     | 9   | 214,731,495     | 11  |
+| INCOME FROM OPERATIONS     | 500,684,818    | 51  | 360,766,289    | 47  | 1,371,189,264   | 50  | 896,340,137     | 44  |
+| INCOME BEFORE INCOME TAX   | 525,369,023    | 53  | 384,186,852    | 51  | 1,449,299,639   | 52  | 957,040,631     | 47  |
+| INCOME TAX EXPENSE         | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
+| NET INCOME                 | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
+
+> Note: Hybrid mode (`--hybrid docling-fast --hybrid-mode full`) is required for borderless financial tables. The basic mode flattens these into unstructured paragraph text.
 
 ## Quick Start
 
@@ -143,6 +162,22 @@ export EASYOCR_LANGUAGES="ch_tra,en,ja"
 
 opendataloader-pdf hybrid mode also supports 80+ OCR languages for scanned PDFs.
 
+## Background
+
+Revelio started in early 2026 as a local EasyOCR wrapper for sensitive image OCR. In April 2026 it was extended to cover PDF processing after running into the limits of OCR on structured documents like financial reports, research papers, and contracts. OCR flattens tables into plain text and garbles numeric columns — opendataloader-pdf parses the PDF structure directly, preserving table layouts and numeric precision.
+
+The two tools are complementary, not competing:
+
+- **EasyOCR** (via `src/mcp-server/`) — image and screenshot text extraction
+- **opendataloader-pdf** (external, invoked by the skill) — native PDF parsing with optional hybrid OCR for scanned PDFs
+
+## Tech Stack
+
+- **OCR engine**: [EasyOCR](https://github.com/JaidedAI/EasyOCR)
+- **PDF parser**: [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf) (Java 11+ required)
+- **Python runtime**: [uv](https://github.com/astral-sh/uv)
+- **Integration**: Claude Code (MCP Protocol + Skills)
+
 ## Project Structure
 
 ```
@@ -158,7 +193,7 @@ revelio/
 └── docs/                # Documentation (architecture, ADRs)
 ```
 
-## Installed Locations
+### Installed Locations
 
 | Component               | Installed Path                                       | Source                                   |
 | ----------------------- | ---------------------------------------------------- | ---------------------------------------- |
@@ -175,43 +210,10 @@ revelio/
 - [Decision Records](docs/decisions/) — ADRs for major decisions
 - [Changelog](CHANGELOG.md) — Version history
 
-## Tech Stack
-
-- **OCR engine**: [EasyOCR](https://github.com/JaidedAI/EasyOCR)
-- **PDF parser**: [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf) (Java 11+ required)
-- **Python runtime**: [uv](https://github.com/astral-sh/uv)
-- **Integration**: Claude Code (MCP Protocol + Skills)
-
-## Example Output
-
-Below is a real output from [TSMC's 2025 Q3 Consolidated Financial Statements](https://investor.tsmc.com/english/quarterly-results/2025/q3) (public filing), converted by opendataloader-pdf in **hybrid mode**.
-
-**Income statement** — converted into a structured Markdown table with accurate numbers and proper column separation:
-
-|                            | 2025 Q3 Amount | %   | 2024 Q3 Amount | %   | 2025 9M Amount  | %   | 2024 9M Amount  | %   |
-| -------------------------- | -------------- | --- | -------------- | --- | --------------- | --- | --------------- | --- |
-| NET REVENUE                | $ 989,918,318  | 100 | $ 759,692,143  | 100 | $ 2,762,963,851 | 100 | $ 2,025,846,521 | 100 |
-| COST OF REVENUE            | 401,375,489    | 41  | 320,346,477    | 42  | 1,133,656,708   | 41  | 913,871,108     | 45  |
-| GROSS PROFIT               | 588,542,829    | 59  | 439,345,666    | 58  | 1,629,307,143   | 59  | 1,111,975,413   | 55  |
-| Research and development   | 63,742,245     | 6   | 52,783,826     | 7   | 181,569,457     | 7   | 146,950,466     | 7   |
-| General and administrative | 20,048,234     | 2   | 22,890,591     | 3   | 63,887,355      | 2   | 58,317,959      | 3   |
-| Marketing                  | 3,973,966      | -   | 3,404,487      | 1   | 12,002,028      | -   | 9,463,070       | 1   |
-| Total operating expenses   | 87,764,445     | 8   | 79,078,904     | 11  | 257,458,840     | 9   | 214,731,495     | 11  |
-| INCOME FROM OPERATIONS     | 500,684,818    | 51  | 360,766,289    | 47  | 1,371,189,264   | 50  | 896,340,137     | 44  |
-| INCOME BEFORE INCOME TAX   | 525,369,023    | 53  | 384,186,852    | 51  | 1,449,299,639   | 52  | 957,040,631     | 47  |
-| INCOME TAX EXPENSE         | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
-| NET INCOME                 | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
-
-> Note: Hybrid mode (`--hybrid docling-fast --hybrid-mode full`) is required for borderless financial tables. The basic mode flattens these into unstructured paragraph text.
-
 ## History
 
 - **2026-04** — Merged PDF processing via opendataloader-pdf; renamed skill from `/ocr-local` to `/revelio` and MCP server from `easyocr` to `revelio`
 - **2026-02** — Attempted upstream contribution to [WindoC/easyocr-mcp](https://github.com/WindoC/easyocr-mcp) (stalled). The [Clementtang/easyocr-mcp fork](https://github.com/Clementtang/easyocr-mcp) is now archived; Revelio maintains its own MCP server implementation. See [ADR-002](docs/decisions/002-memory-management-strategy.md) for context.
-
-## Why "Revelio"?
-
-In the Harry Potter universe, _Revelio_ is a charm that reveals hidden objects, secret messages, and invisible things. This project does the same — it reveals the hidden text and structure within documents, while keeping your sensitive content private.
 
 ## License
 

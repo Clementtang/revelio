@@ -1,3 +1,5 @@
+<div align="center">
+
 # Revelio
 
 ![License](https://img.shields.io/github/license/Clementtang/revelio)
@@ -10,7 +12,11 @@
 
 繁體中文 | [English](README.md)
 
-本地隱私優先的文件處理工具，整合於 Claude Code。Revelio 透過 [EasyOCR](https://github.com/JaidedAI/EasyOCR) 辨識圖片文字，並透過 [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf) 解析 PDF 結構（表格、標題、閱讀順序）。所有處理都在你的裝置上完成，敏感內容絕不上傳雲端。
+</div>
+
+在哈利波特的世界中，_Revelio_（顯形咒）是一個用於揭示隱藏物品、秘密訊息和隱形事物的咒語。這個專案做的事情一樣 — 揭示文件中隱藏的文字與結構，同時保護你的敏感內容隱私。
+
+本地隱私優先的文件處理工具，整合於 [Claude Code](https://claude.ai/code)。Revelio 透過 [EasyOCR](https://github.com/JaidedAI/EasyOCR) 辨識圖片文字，並透過 [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf) 解析 PDF 結構（表格、標題、閱讀順序）。所有處理都在你的裝置上完成，敏感內容絕不上傳雲端。
 
 ## 功能特色
 
@@ -22,14 +28,27 @@
 - **使用者掌控** — Skill 模式下，由你決定是否讓 Claude 讀取結果
 - **多語言支援** — 預設繁體中文 + 英文，兩個工具都支援 80+ 種語言
 
-## 背景
+## 範例輸出
 
-Revelio 起始於 2026 年初，原本只是一個本地 EasyOCR 的封裝，用於處理敏感圖片的 OCR。2026 年 4 月擴充了 PDF 處理能力，起因是 OCR 在處理結構化文件（財報、研究報告、合約）時有其極限 — OCR 會把表格攤平成純文字、數字欄位錯位，而 opendataloader-pdf 直接解析 PDF 結構，保留表格與數字精準度。
+以下是 [台積電 2025 Q3 合併財務報告](https://investor.tsmc.com/english/quarterly-results/2025/q3)（公開資訊）經 opendataloader-pdf **hybrid mode** 轉換的實際輸出。
 
-兩個工具互補而非互斥：
+**損益表** — 轉換為結構化 Markdown 表格，數字精準、欄位分明：
 
-- **EasyOCR**（透過 `src/mcp-server/`）— 處理圖片與截圖中的文字
-- **opendataloader-pdf**（外部工具，由 skill 呼叫）— 原生 PDF 解析，掃描件可啟用 hybrid OCR
+|                            | 2025 Q3 Amount | %   | 2024 Q3 Amount | %   | 2025 9M Amount  | %   | 2024 9M Amount  | %   |
+| -------------------------- | -------------- | --- | -------------- | --- | --------------- | --- | --------------- | --- |
+| NET REVENUE                | $ 989,918,318  | 100 | $ 759,692,143  | 100 | $ 2,762,963,851 | 100 | $ 2,025,846,521 | 100 |
+| COST OF REVENUE            | 401,375,489    | 41  | 320,346,477    | 42  | 1,133,656,708   | 41  | 913,871,108     | 45  |
+| GROSS PROFIT               | 588,542,829    | 59  | 439,345,666    | 58  | 1,629,307,143   | 59  | 1,111,975,413   | 55  |
+| Research and development   | 63,742,245     | 6   | 52,783,826     | 7   | 181,569,457     | 7   | 146,950,466     | 7   |
+| General and administrative | 20,048,234     | 2   | 22,890,591     | 3   | 63,887,355      | 2   | 58,317,959      | 3   |
+| Marketing                  | 3,973,966      | -   | 3,404,487      | 1   | 12,002,028      | -   | 9,463,070       | 1   |
+| Total operating expenses   | 87,764,445     | 8   | 79,078,904     | 11  | 257,458,840     | 9   | 214,731,495     | 11  |
+| INCOME FROM OPERATIONS     | 500,684,818    | 51  | 360,766,289    | 47  | 1,371,189,264   | 50  | 896,340,137     | 44  |
+| INCOME BEFORE INCOME TAX   | 525,369,023    | 53  | 384,186,852    | 51  | 1,449,299,639   | 52  | 957,040,631     | 47  |
+| INCOME TAX EXPENSE         | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
+| NET INCOME                 | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
+
+> 注意：處理無邊框財務表格時必須使用 Hybrid mode（`--hybrid docling-fast --hybrid-mode full`）。基本模式會將這類表格攤平為無結構的段落文字。
 
 ## 快速開始
 
@@ -143,6 +162,22 @@ export EASYOCR_LANGUAGES="ch_tra,en,ja"
 
 opendataloader-pdf 的 hybrid 模式同樣支援 80+ 種 OCR 語言。
 
+## 背景
+
+Revelio 起始於 2026 年初，原本只是一個本地 EasyOCR 的封裝，用於處理敏感圖片的 OCR。2026 年 4 月擴充了 PDF 處理能力，起因是 OCR 在處理結構化文件（財報、研究報告、合約）時有其極限 — OCR 會把表格攤平成純文字、數字欄位錯位，而 opendataloader-pdf 直接解析 PDF 結構，保留表格與數字精準度。
+
+兩個工具互補而非互斥：
+
+- **EasyOCR**（透過 `src/mcp-server/`）— 處理圖片與截圖中的文字
+- **opendataloader-pdf**（外部工具，由 skill 呼叫）— 原生 PDF 解析，掃描件可啟用 hybrid OCR
+
+## 技術棧
+
+- **OCR 引擎**：[EasyOCR](https://github.com/JaidedAI/EasyOCR)
+- **PDF 解析器**：[opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf)（需要 Java 11+）
+- **Python 執行環境**：[uv](https://github.com/astral-sh/uv)
+- **整合平台**：Claude Code（MCP 協議 + Skills）
+
 ## 專案結構
 
 ```
@@ -158,7 +193,7 @@ revelio/
 └── docs/                # 文件（架構、ADR）
 ```
 
-## 安裝位置
+### 安裝位置
 
 | 元件                    | 安裝路徑                               | 原始碼                                   |
 | ----------------------- | -------------------------------------- | ---------------------------------------- |
@@ -175,43 +210,10 @@ revelio/
 - [決策記錄](docs/decisions/) — 重大決策的 ADR
 - [變更日誌](CHANGELOG.zh-TW.md) — 版本歷程
 
-## 技術棧
-
-- **OCR 引擎**：[EasyOCR](https://github.com/JaidedAI/EasyOCR)
-- **PDF 解析器**：[opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf)（需要 Java 11+）
-- **Python 執行環境**：[uv](https://github.com/astral-sh/uv)
-- **整合平台**：Claude Code（MCP 協議 + Skills）
-
-## 範例輸出
-
-以下是 [台積電 2025 Q3 合併財務報告](https://investor.tsmc.com/english/quarterly-results/2025/q3)（公開資訊）經 opendataloader-pdf **hybrid mode** 轉換的實際輸出。
-
-**損益表** — 轉換為結構化 Markdown 表格，數字精準、欄位分明：
-
-|                            | 2025 Q3 Amount | %   | 2024 Q3 Amount | %   | 2025 9M Amount  | %   | 2024 9M Amount  | %   |
-| -------------------------- | -------------- | --- | -------------- | --- | --------------- | --- | --------------- | --- |
-| NET REVENUE                | $ 989,918,318  | 100 | $ 759,692,143  | 100 | $ 2,762,963,851 | 100 | $ 2,025,846,521 | 100 |
-| COST OF REVENUE            | 401,375,489    | 41  | 320,346,477    | 42  | 1,133,656,708   | 41  | 913,871,108     | 45  |
-| GROSS PROFIT               | 588,542,829    | 59  | 439,345,666    | 58  | 1,629,307,143   | 59  | 1,111,975,413   | 55  |
-| Research and development   | 63,742,245     | 6   | 52,783,826     | 7   | 181,569,457     | 7   | 146,950,466     | 7   |
-| General and administrative | 20,048,234     | 2   | 22,890,591     | 3   | 63,887,355      | 2   | 58,317,959      | 3   |
-| Marketing                  | 3,973,966      | -   | 3,404,487      | 1   | 12,002,028      | -   | 9,463,070       | 1   |
-| Total operating expenses   | 87,764,445     | 8   | 79,078,904     | 11  | 257,458,840     | 9   | 214,731,495     | 11  |
-| INCOME FROM OPERATIONS     | 500,684,818    | 51  | 360,766,289    | 47  | 1,371,189,264   | 50  | 896,340,137     | 44  |
-| INCOME BEFORE INCOME TAX   | 525,369,023    | 53  | 384,186,852    | 51  | 1,449,299,639   | 52  | 957,040,631     | 47  |
-| INCOME TAX EXPENSE         | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
-| NET INCOME                 | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
-
-> Note: Hybrid mode (`--hybrid docling-fast --hybrid-mode full`) is required for borderless financial tables. The basic mode flattens these into unstructured paragraph text.
-
 ## 歷程
 
 - **2026-04** — 整合 PDF 處理功能（opendataloader-pdf）；skill 從 `/ocr-local` 改名為 `/revelio`，MCP server 從 `easyocr` 改名為 `revelio`
 - **2026-02** — 曾嘗試向 [WindoC/easyocr-mcp](https://github.com/WindoC/easyocr-mcp) 提交 upstream 貢獻（討論停滯）。[Clementtang/easyocr-mcp fork](https://github.com/Clementtang/easyocr-mcp) 已封存，Revelio 自行維護 MCP server 實作。詳見 [ADR-002](docs/decisions/002-memory-management-strategy.md)。
-
-## 為什麼叫「Revelio」？
-
-在哈利波特的世界中，_Revelio_（顯形咒）是一個用於揭示隱藏物品、秘密訊息和隱形事物的咒語。這個專案做的事情一樣 — 揭示文件中隱藏的文字與結構，同時保護你的敏感內容隱私。
 
 ## 授權
 
