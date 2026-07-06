@@ -49,7 +49,11 @@
 
 ## Future Improvements
 
-- [ ] 在 README 說明 EasyOCR MCP 的來源與授權
+- [ ] 評估是否移植 subprocess isolation 記憶體管理方案（供 CUDA 環境），見 [ADR-002](docs/decisions/002-memory-management-strategy.md)
+
+## 已完成
+
+- [x] 在 README 說明 EasyOCR MCP 的來源與授權 — README「History」段與 `THIRD_PARTY_LICENSES.md` 均已註明來源與 Apache 2.0 授權
 
 ## 已廢止
 
