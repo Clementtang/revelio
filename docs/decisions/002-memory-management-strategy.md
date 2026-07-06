@@ -52,7 +52,7 @@ WindoC 的 README 預設安裝指令使用 `cu128`（CUDA 12.8），推測其測
 
 ### 現階段：維持 `gc.collect()` 方案
 
-目前我們的使用環境為 Apple Silicon MPS，`gc.collect()` 已驗證有效。現有實作（auto-unload + `unload_ocr_models` tool）在此環境下運作正常。
+目前我們的使用環境為 Apple Silicon MPS，`gc.collect()` 已驗證有效。此方案自 0.5.0 起實作於本專案的 `src/mcp-server/server.py`：EasyOCR 延遲載入、`unload_ocr_models` 工具手動釋放、`EASYOCR_UNLOAD_TIMEOUT` 閒置自動卸載（預設 `0` 停用）。此前這些功能只存在於已封存的 fork，尚未移植；現已內建，不依賴上游。
 
 ### 未來方向：關注 subprocess isolation
 
