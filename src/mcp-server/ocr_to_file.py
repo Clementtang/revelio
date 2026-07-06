@@ -9,6 +9,8 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+from ocr_common import get_default_languages, get_gpu_flag
+
 
 def main():
     if len(sys.argv) < 2:
@@ -44,10 +46,10 @@ def main():
         print(f"錯誤: 無法載入 EasyOCR: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Initialize reader
-    languages = os.environ.get("EASYOCR_LANGUAGES", "ch_tra,en").split(",")
+    # Initialize reader (GPU controlled by EASYOCR_GPU, shared with the MCP server)
+    languages = get_default_languages()
     try:
-        reader = easyocr.Reader(languages, gpu=False, verbose=False)
+        reader = easyocr.Reader(languages, gpu=get_gpu_flag(), verbose=False)
     except Exception as e:
         print(f"錯誤: 無法初始化 OCR 引擎: {e}", file=sys.stderr)
         sys.exit(1)
