@@ -92,7 +92,7 @@ opendataloader_pdf.convert(
 
 - **必須使用 hybrid mode** — 基本模式無法正確處理無邊框表格（如財務報表）
 - 掃描件額外加 `force_ocr=True`
-- 中文文件加 `ocr_lang="zh,en"`
+- 中文文件加 `ocr_lang="ch_tra,en"`
 - 轉換後建議人工抽查表格數字正確性
 - 處理完畢後可用 `kill %1` 或 `kill $(lsof -t -i :5002)` 關閉 hybrid server
 
@@ -128,6 +128,8 @@ Claude：[強制使用 EasyOCR] 正在執行本地 OCR...
 
 ## 支援語言
 
-- 繁體中文 (ch_tra / zh)
-- 英文 (en)
+- 繁體中文 (`ch_tra`)
+- 英文 (`en`)
 - EasyOCR 支援 80+ 語言，opendataloader-pdf hybrid mode 同樣支援
+
+> 注意：EasyOCR 與 opendataloader-pdf 都使用 `ch_tra`（繁體中文）語言碼。
