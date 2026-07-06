@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/mcp-server
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # The unit tests are deliberately EasyOCR/PyTorch-free, so we install only
+      # the lightweight runtime deps plus the dev tools — no multi-hundred-MB
+      # torch download needed.
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip numpy pillow requests pytest ruff
+
+      - name: Lint
+        run: ruff check .
+
+      - name: Test
+        run: pytest -q
