@@ -111,7 +111,7 @@ copies of the Software.
 - **License**: Apache License 2.0
 - **Note**: The MCP server implementation in `src/mcp-server/server.py` is based on this project.
 
-License confirmed on 2025-02-03 via https://github.com/WindoC/easyocr-mcp/issues/1
+License confirmed on 2026-02-03 via https://github.com/WindoC/easyocr-mcp/issues/1
 
 ---
 

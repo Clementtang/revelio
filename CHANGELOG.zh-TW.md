@@ -6,7 +6,31 @@
 
 ## [未發布]
 
-## [0.4.1] - 2025-02-02
+## [0.5.0] - 2026-04
+
+### 新增
+
+- **PDF 處理**（透過 [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf)）— 解析表格、標題與閱讀順序，掃描件／CID 字型 PDF 可啟用 hybrid OCR
+- `unload_ocr_models` MCP 工具與 `EASYOCR_UNLOAD_TIMEOUT` 閒置自動卸載，釋放 EasyOCR/PyTorch 記憶體（~2.6 GB）— 見 [ADR-002](docs/decisions/002-memory-management-strategy.md)
+- `EASYOCR_GPU` 環境變數控制 GPU/MPS 使用，MCP server 與獨立腳本共用（預設 CPU）
+- 共用模組 `ocr_common.py`（語言/GPU 設定、影像驗證），由 `server.py` 與 `ocr_to_file.py` 共用
+- [ADR-003](docs/decisions/003-pdf-processing-architecture.md) 記錄雙引擎 PDF 架構
+- 單元測試、ruff 設定與 GitHub Actions CI 流程
+
+### 變更
+
+- **改名**：skill `/ocr-local` → `/revelio`，MCP server `easyocr` → `revelio`；server 改為就地引用自 `~/revelio/src/mcp-server/`（不再複製到 `~/.claude/`）
+- PDF 處理改以 hybrid mode 為預設
+- EasyOCR 改為首次使用時延遲載入，而非啟動時載入
+- 將 `server.py` 中三個 OCR 工具重構為共用 helper
+
+### 修復
+
+- 強化 `ocr_image_url` 以防範 SSRF／過大下載（僅限 http/https，含大小上限）
+- 更新文件（`architecture.md`、`setup.md`、各元件 README）以符合現行雙引擎設計與安裝路徑
+- 修正 changelog／ADR 的年份（2025 → 2026）
+
+## [0.4.1] - 2026-02-02
 
 ### 修復
 
@@ -28,7 +52,7 @@
 - 更新 pyproject.toml 中繼資料（名稱、版本、描述）
 - 更新最低依賴版本（pillow、requests、numpy、mcp）
 
-## [0.4.0] - 2025-02-02
+## [0.4.0] - 2026-02-02
 
 ### 新增
 
@@ -44,7 +68,7 @@
 
 - 更新專案結構文件
 
-## [0.3.0] - 2025-02-02
+## [0.3.0] - 2026-02-02
 
 ### 變更
 
@@ -57,7 +81,7 @@
 - 專案內新增 `ocr_results/` 目錄（含 `.gitkeep`）
 - `.gitignore` 規則排除 OCR 結果檔案（可能包含敏感資料）
 
-## [0.2.0] - 2025-02-02
+## [0.2.0] - 2026-02-02
 
 ### 新增
 
@@ -70,7 +94,7 @@
 
 - 確立雙模式架構：MCP（快速）vs Skill（隱私）
 
-## [0.1.0] - 2025-02-02
+## [0.1.0] - 2026-02-02
 
 ### 新增
 
@@ -92,10 +116,11 @@
 
 ## 版本歷程摘要
 
-| 版本  | 日期       | 重點                |
-| ----- | ---------- | ------------------- |
-| 0.4.1 | 2025-02-02 | 錯誤修復與錯誤處理  |
-| 0.4.0 | 2025-02-02 | 原始碼與雙語文件    |
-| 0.3.0 | 2025-02-02 | 可自訂輸出目錄      |
-| 0.2.0 | 2025-02-02 | 隱私優先 Skill 模式 |
-| 0.1.0 | 2025-02-02 | 初始 MCP Server     |
+| 版本  | 日期       | 重點                              |
+| ----- | ---------- | --------------------------------- |
+| 0.5.0 | 2026-04    | PDF 支援、/revelio 改名、記憶體管理 |
+| 0.4.1 | 2026-02-02 | 錯誤修復與錯誤處理                |
+| 0.4.0 | 2026-02-02 | 原始碼與雙語文件                  |
+| 0.3.0 | 2026-02-02 | 可自訂輸出目錄                    |
+| 0.2.0 | 2026-02-02 | 隱私優先 Skill 模式               |
+| 0.1.0 | 2026-02-02 | 初始 MCP Server                   |

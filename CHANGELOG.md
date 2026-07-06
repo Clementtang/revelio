@@ -6,7 +6,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-## [0.4.1] - 2025-02-02
+## [0.5.0] - 2026-04
+
+### Added
+
+- **PDF processing** via [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf) — parses tables, headings and reading order, with optional hybrid OCR for scanned/CID-font PDFs
+- `unload_ocr_models` MCP tool and `EASYOCR_UNLOAD_TIMEOUT` idle auto-unload to release EasyOCR/PyTorch memory (~2.6 GB) — see [ADR-002](docs/decisions/002-memory-management-strategy.md)
+- `EASYOCR_GPU` environment variable to control GPU/MPS usage, shared by the MCP server and the standalone script (default CPU)
+- Shared `ocr_common.py` module (language/GPU config, image validation) used by both `server.py` and `ocr_to_file.py`
+- [ADR-003](docs/decisions/003-pdf-processing-architecture.md) documenting the dual-engine PDF architecture
+- Unit tests, ruff config, and a GitHub Actions CI workflow
+
+### Changed
+
+- **Renamed** the skill `/ocr-local` → `/revelio` and the MCP server `easyocr` → `revelio`; the server is now referenced in place from `~/revelio/src/mcp-server/` (no copy into `~/.claude/`)
+- Hybrid mode is now the default for PDF processing
+- EasyOCR is imported lazily on first use instead of at server startup
+- Deduplicated the three OCR tools in `server.py` behind a shared helper
+
+### Fixed
+
+- Hardened `ocr_image_url` against SSRF/oversized downloads (http/https only, size cap)
+- Documentation (`architecture.md`, `setup.md`, component READMEs) updated to match the current dual-engine design and install paths
+- Corrected changelog/ADR dates from 2025 to 2026
+
+## [0.4.1] - 2026-02-02
 
 ### Fixed
 
@@ -28,7 +52,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Update pyproject.toml metadata (name, version, description)
 - Update minimum dependency versions (pillow, requests, numpy, mcp)
 
-## [0.4.0] - 2025-02-02
+## [0.4.0] - 2026-02-02
 
 ### Added
 
@@ -44,7 +68,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Updated project structure documentation
 
-## [0.3.0] - 2025-02-02
+## [0.3.0] - 2026-02-02
 
 ### Changed
 
@@ -57,7 +81,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `ocr_results/` directory in project folder with `.gitkeep`
 - `.gitignore` rules to exclude OCR result files (may contain sensitive data)
 
-## [0.2.0] - 2025-02-02
+## [0.2.0] - 2026-02-02
 
 ### Added
 
@@ -70,7 +94,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Established dual-mode architecture: MCP (fast) vs Skill (private)
 
-## [0.1.0] - 2025-02-02
+## [0.1.0] - 2026-02-02
 
 ### Added
 
@@ -92,10 +116,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## Version History Summary
 
-| Version | Date       | Highlights                    |
-| ------- | ---------- | ----------------------------- |
-| 0.4.1   | 2025-02-02 | Bug fixes & error handling    |
-| 0.4.0   | 2025-02-02 | Source code & bilingual docs  |
-| 0.3.0   | 2025-02-02 | Configurable output directory |
-| 0.2.0   | 2025-02-02 | Privacy-first Skill mode      |
-| 0.1.0   | 2025-02-02 | Initial MCP Server            |
+| Version | Date       | Highlights                        |
+| ------- | ---------- | --------------------------------- |
+| 0.5.0   | 2026-04    | PDF support, /revelio rebrand, memory mgmt |
+| 0.4.1   | 2026-02-02 | Bug fixes & error handling        |
+| 0.4.0   | 2026-02-02 | Source code & bilingual docs      |
+| 0.3.0   | 2026-02-02 | Configurable output directory     |
+| 0.2.0   | 2026-02-02 | Privacy-first Skill mode          |
+| 0.1.0   | 2026-02-02 | Initial MCP Server                |
