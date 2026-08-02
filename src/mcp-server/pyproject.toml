@@ -1,6 +1,6 @@
 [project]
 name = "revelio"
-version = "0.5.0"
+version = "0.6.0"
 description = "Privacy-first local document processing: EasyOCR for images, opendataloader-pdf for PDFs"
 readme = "README.md"
 requires-python = ">=3.11"
