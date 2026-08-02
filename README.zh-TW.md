@@ -24,6 +24,7 @@
 - **雙工具，單一入口** — `/revelio` skill 依副檔名自動選擇：
   - 圖片（`.jpg`, `.png`, `.bmp`, `.tiff` 等）→ **EasyOCR**
   - PDF（`.pdf`）→ **opendataloader-pdf**（保留表格、標題、閱讀順序）
+- **PDF 前置偵測** — 轉換前由 [pdf-inspector](https://github.com/firecrawl/pdf-inspector) 以毫秒級分析 PDF 結構，偵測掃描件與不可解碼的文字層（如 CID 字型缺 ToUnicode CMap），事先選對 OCR 模式，不再試錯重啟
 - **手動指定** — 使用 `--ocr` 或 `--pdf` 強制指定工具
 - **使用者掌控** — Skill 模式下，由你決定是否讓 Claude 讀取結果
 - **多語言支援** — 預設繁體中文 + 英文，兩個工具都支援 80+ 種語言
@@ -63,7 +64,7 @@
 | 7950 | 所得稅費用   | 73,613,661   | 7   | 59,106,682   | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
 | 8200 | 本期淨利     | 451,755,362  | 46  | 325,080,170  | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
 
-> **為什麼需要不同模式？** 英文版 PDF 使用標準字型，附帶 Unicode 對照表，hybrid mode 可直接從 PDF 結構提取文字。中文版 PDF 使用 CID-keyed fonts 但缺少 ToUnicode CMap，文字層無法解讀。加上 `--force-ocr --ocr-lang "ch_tra,en"` 後，hybrid server 改為以視覺方式讀取頁面影像（OCR），成功還原內容，但會產生少量辨識瑕疵（例如「二十」被誤讀為「二+」）。
+> **為什麼需要不同模式？** 英文版 PDF 使用標準字型，附帶 Unicode 對照表，hybrid mode 可直接從 PDF 結構提取文字。中文版 PDF 使用 CID-keyed fonts 但缺少 ToUnicode CMap，文字層無法解讀。加上 `--force-ocr --ocr-lang "ch_tra,en"` 後，hybrid server 改為以視覺方式讀取頁面影像（OCR），成功還原內容，但會產生少量辨識瑕疵（例如「二十」被誤讀為「二+」）。skill 現在會在轉換前以 pdf-inspector 自動偵測這種情況（回報 `suspected_garbled_text`），直接選用正確模式。
 
 ## 快速開始
 
@@ -117,12 +118,12 @@
    cp -r src/skill ~/.claude/skills/revelio
    ```
 
-5. **安裝 opendataloader-pdf**（PDF 功能需要）：
+5. **安裝 opendataloader-pdf 與 pdf-inspector**（PDF 功能需要）：
 
    ```bash
    python3 -m venv ~/odl-env
    source ~/odl-env/bin/activate
-   pip install -U "opendataloader-pdf[hybrid]"
+   pip install -U "opendataloader-pdf[hybrid]" pdf-inspector
    ```
 
 ## 使用方式
@@ -185,11 +186,13 @@ Revelio 起始於 2026 年初，原本只是一個本地 EasyOCR 的封裝，用
 
 - **EasyOCR**（透過 `src/mcp-server/`）— 處理圖片與截圖中的文字
 - **opendataloader-pdf**（外部工具，由 skill 呼叫）— 原生 PDF 解析，掃描件可啟用 hybrid OCR
+- **pdf-inspector**（外部工具，由 skill 呼叫）— 毫秒級前置分類，在轉換開始前判斷 PDF 是否需要 force-OCR
 
 ## 技術棧
 
 - **OCR 引擎**：[EasyOCR](https://github.com/JaidedAI/EasyOCR)
 - **PDF 解析器**：[opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf)（需要 Java 11+）
+- **PDF 前置偵測**：[pdf-inspector](https://github.com/firecrawl/pdf-inspector)（Rust 實作，以 Python wheel 安裝）
 - **Python 執行環境**：[uv](https://github.com/astral-sh/uv)
 - **整合平台**：Claude Code（MCP 協議 + Skills）
 
@@ -216,7 +219,7 @@ revelio/
 | Skill                   | `~/.claude/skills/revelio/`            | `src/skill/`                             |
 | OCR 結果                | `~/revelio/ocr_results/`               | —                                        |
 | PDF 輸出                | `~/odl-output/`                        | —                                        |
-| opendataloader-pdf venv | `~/odl-env/`                           | `pip install opendataloader-pdf[hybrid]` |
+| opendataloader-pdf venv | `~/odl-env/`                           | `pip install opendataloader-pdf[hybrid] pdf-inspector` |
 
 ## 文件
 

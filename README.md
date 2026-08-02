@@ -24,6 +24,7 @@ A privacy-first local document processing toolkit for [Claude Code](https://clau
 - **Two Tools, One Entry Point** — The `/revelio` skill auto-selects based on file type:
   - Images (`.jpg`, `.png`, `.bmp`, `.tiff`, ...) → **EasyOCR**
   - PDFs (`.pdf`) → **opendataloader-pdf** (preserves tables, headings, reading order)
+- **Pre-flight PDF Detection** — [pdf-inspector](https://github.com/firecrawl/pdf-inspector) analyzes the PDF structure in milliseconds before conversion, detecting scanned pages and undecodable text layers (e.g. CID fonts without ToUnicode CMap) so the right OCR mode is chosen up front — no trial-and-error restarts
 - **Manual Override** — Use `--ocr` or `--pdf` to force a specific tool
 - **User Control** — In Skill mode, you decide if Claude can read the results
 - **Multi-language** — Traditional Chinese + English by default; both tools support 80+ languages
@@ -63,7 +64,7 @@ Below is a real output from [TSMC's 2025 Q3 Consolidated Financial Statements](h
 | 7950 | 所得稅費用   | 73,613,661     | 7   | 59,106,682     | 8   | 239,318,192     | 8   | 159,077,760     | 8   |
 | 8200 | 本期淨利     | 451,755,362    | 46  | 325,080,170    | 43  | 1,209,981,447   | 44  | 797,962,871     | 39  |
 
-> **Why different modes?** The English PDF uses standard fonts with Unicode mappings — hybrid mode extracts text directly from the PDF structure. The Chinese PDF uses CID-keyed fonts without ToUnicode CMap, so the text layer is unreadable. Adding `--force-ocr --ocr-lang "ch_tra,en"` to the hybrid server makes it fall back to visual OCR, reading the rendered page as an image. This produces minor OCR artifacts (e.g., `二十` misread as `二+`) but successfully recovers the content.
+> **Why different modes?** The English PDF uses standard fonts with Unicode mappings — hybrid mode extracts text directly from the PDF structure. The Chinese PDF uses CID-keyed fonts without ToUnicode CMap, so the text layer is unreadable. Adding `--force-ocr --ocr-lang "ch_tra,en"` to the hybrid server makes it fall back to visual OCR, reading the rendered page as an image. This produces minor OCR artifacts (e.g., `二十` misread as `二+`) but successfully recovers the content. The skill now detects this case automatically before conversion via pdf-inspector (reported as `suspected_garbled_text`) and picks the right mode up front.
 
 ## Quick Start
 
@@ -117,12 +118,12 @@ Below is a real output from [TSMC's 2025 Q3 Consolidated Financial Statements](h
    cp -r src/skill ~/.claude/skills/revelio
    ```
 
-5. **Install opendataloader-pdf** (for PDF support):
+5. **Install opendataloader-pdf and pdf-inspector** (for PDF support):
 
    ```bash
    python3 -m venv ~/odl-env
    source ~/odl-env/bin/activate
-   pip install -U "opendataloader-pdf[hybrid]"
+   pip install -U "opendataloader-pdf[hybrid]" pdf-inspector
    ```
 
 ## Usage
@@ -185,11 +186,13 @@ The two tools are complementary, not competing:
 
 - **EasyOCR** (via `src/mcp-server/`) — image and screenshot text extraction
 - **opendataloader-pdf** (external, invoked by the skill) — native PDF parsing with optional hybrid OCR for scanned PDFs
+- **pdf-inspector** (external, invoked by the skill) — millisecond pre-flight classification that decides whether a PDF needs force-OCR before conversion starts
 
 ## Tech Stack
 
 - **OCR engine**: [EasyOCR](https://github.com/JaidedAI/EasyOCR)
 - **PDF parser**: [opendataloader-pdf](https://github.com/opendataloader-project/opendataloader-pdf) (Java 11+ required)
+- **PDF pre-flight detection**: [pdf-inspector](https://github.com/firecrawl/pdf-inspector) (Rust, installed as a Python wheel)
 - **Python runtime**: [uv](https://github.com/astral-sh/uv)
 - **Integration**: Claude Code (MCP Protocol + Skills)
 
@@ -216,7 +219,7 @@ revelio/
 | Skill                   | `~/.claude/skills/revelio/`                          | `src/skill/`                             |
 | OCR results             | `~/revelio/ocr_results/`                             | —                                        |
 | PDF output              | `~/odl-output/`                                      | —                                        |
-| opendataloader-pdf venv | `~/odl-env/`                                         | `pip install opendataloader-pdf[hybrid]` |
+| opendataloader-pdf venv | `~/odl-env/`                                         | `pip install opendataloader-pdf[hybrid] pdf-inspector` |
 
 ## Documentation
 
