@@ -64,15 +64,17 @@ cp -r src/skill ~/.claude/skills/revelio
 
 Claude Code 會在下次啟動時自動偵測 `~/.claude/skills/revelio/SKILL.md`。
 
-### 5. 安裝 opendataloader-pdf（PDF 功能）
+### 5. 安裝 opendataloader-pdf 與 pdf-inspector（PDF 功能）
 
 ```bash
 python3 -m venv ~/odl-env
 source ~/odl-env/bin/activate
-pip install -U "opendataloader-pdf[hybrid]"
+pip install -U "opendataloader-pdf[hybrid]" pdf-inspector
 ```
 
 需先安裝 Java 11+（`java -version` 應可正常輸出）。
+
+[pdf-inspector](https://github.com/firecrawl/pdf-inspector) 用於轉換前的前置偵測：毫秒級判斷 PDF 是否為掃描件、文字層是否可解碼（如 CID 字型缺 ToUnicode CMap），讓 skill 在啟動 hybrid server 前就決定要不要加 `--force-ocr`，省去試錯重啟的 30–40 秒成本。詳見 [ADR-004](decisions/004-pdf-preflight-detection.md)。
 
 ### 6. 驗證安裝
 
@@ -88,6 +90,9 @@ cat ~/.claude/skills/revelio/SKILL.md
 
 # 檢查 opendataloader-pdf
 source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --help >/dev/null && echo "opendataloader OK"
+
+# 檢查 pdf-inspector（前置偵測）
+source ~/odl-env/bin/activate && python3 -c "import pdf_inspector; print('pdf-inspector OK')"
 
 # 檢查結果目錄
 ls -la ~/revelio/ocr_results/
@@ -140,10 +145,11 @@ Claude: 讓我幫你辨識這張圖片...
 
 ### PDF 缺少中文字（只有數字和代碼）
 
-部分中文 PDF 使用 CID-keyed fonts 但缺少 ToUnicode CMap，文字層無法解讀。改用 force-ocr 模式啟動 hybrid server：
+部分中文 PDF 使用 CID-keyed fonts 但缺少 ToUnicode CMap，文字層無法解讀。skill 的前置偵測（pdf-inspector，步驟 B-0）通常會事先發現這種情況（回報 `suspected_garbled_text`）並直接以 force-ocr 模式啟動。若跳過了偵測或偵測失敗，手動改用 force-ocr 模式重啟 hybrid server：
 
 ```bash
+kill $(lsof -t -i :5002) 2>/dev/null
 source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 --force-ocr --ocr-lang "ch_tra,en" &
 ```
 
-詳見 [ADR-003](decisions/003-pdf-processing-architecture.md) 與 README 的範例輸出。
+詳見 [ADR-003](decisions/003-pdf-processing-architecture.md)、[ADR-004](decisions/004-pdf-preflight-detection.md) 與 README 的範例輸出。

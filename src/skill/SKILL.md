@@ -46,15 +46,45 @@ cd ~/revelio/src/mcp-server && uv run python ocr_to_file.py "<image_path>"
 
 #### 路徑 B：opendataloader-pdf（PDF）
 
+**步驟 B-0：前置偵測（pdf-inspector）**
+
+在啟動 hybrid server **之前**，先用 [pdf-inspector](https://github.com/firecrawl/pdf-inspector) 判斷這份 PDF 是否需要 force-OCR（毫秒級、純本地結構分析，不渲染、不上傳）：
+
+```bash
+source ~/odl-env/bin/activate && python3 -c "
+import json, pdf_inspector
+r = pdf_inspector.detect_pdf('<pdf_path>')
+print(json.dumps({
+    'pdf_type': r.pdf_type,
+    'page_count': r.page_count,
+    'pages_needing_ocr': r.pages_needing_ocr,
+    'ocr_reasons': {p.page: p.reasons for p in r.ocr_reasons_by_page},
+    'confidence': r.confidence,
+}, ensure_ascii=False))
+"
+```
+
+依偵測結果決定 server 啟動旗標：
+
+| 偵測結果                                                        | 判斷                                     | 啟動旗標                          |
+| --------------------------------------------------------------- | ---------------------------------------- | --------------------------------- |
+| `pages_needing_ocr` 為空                                        | 文字層可用                               | 標準模式（不加 `--force-ocr`）    |
+| 原因含 `suspected_garbled_text` 或 `vector_text`                | 文字層不可解碼（如 CID 字型缺 ToUnicode）| `--force-ocr --ocr-lang "ch_tra,en"` |
+| `pdf_type` 為 `scanned`/`image_based`，或原因含 `scanned`/`no_text` | 掃描件／純圖片                           | `--force-ocr --ocr-lang "ch_tra,en"` |
+
+> `ocr_lang` 依文件語言調整：純英文文件用 `"en"` 即可，中文或中英混合用 `"ch_tra,en"`。
+>
+> 若 pdf-inspector 未安裝或執行失敗，退回舊的啟發式判斷：檔名或內容明顯為中文 → 直接用 force-ocr 版本；不確定 → 先標準模式試轉，若輸出缺少中文字（只有數字和代碼）或出現「glyph can not be mapped to Unicode」警告，改用 force-ocr 版本重試。
+
 **步驟 B-1：啟動 hybrid server（若尚未運行）**
 
-英文 PDF（標準字型）：
+文字層可用（B-0 偵測 `pages_needing_ocr` 為空）：
 
 ```bash
 source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 &
 ```
 
-中文 PDF（或出現「glyph can not be mapped to Unicode」警告時）：
+需要 force-OCR（B-0 偵測到亂碼文字層或掃描件）：
 
 ```bash
 source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 --force-ocr --ocr-lang "ch_tra,en" &
@@ -65,8 +95,7 @@ source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 --force-o
 
 確認 server 已啟動：`lsof -i :5002 | grep LISTEN`
 
-> 判斷依據：如果 PDF 檔名或內容明顯為中文，直接用 `--force-ocr --ocr-lang` 版本啟動。
-> 如果不確定，先用標準模式試轉，若輸出缺少中文字（只有數字和代碼），改用 force-ocr 版本重試。
+> 注意：`--force-ocr` 是 server 啟動旗標。若 server 已用不同模式運行，需先關閉（`kill $(lsof -t -i :5002)`）再以正確旗標重啟——這正是 B-0 前置偵測要避免的重啟成本。
 
 **步驟 B-2：轉換 PDF（hybrid mode）**
 
@@ -91,8 +120,7 @@ opendataloader_pdf.convert(
 **PDF 轉換注意事項：**
 
 - **必須使用 hybrid mode** — 基本模式無法正確處理無邊框表格（如財務報表）
-- 掃描件額外加 `force_ocr=True`
-- 中文文件加 `ocr_lang="ch_tra,en"`
+- 掃描件與亂碼文字層由步驟 B-0 前置偵測，以 `--force-ocr --ocr-lang` 旗標在 server 啟動時決定
 - 轉換後建議人工抽查表格數字正確性
 - 處理完畢後可用 `kill %1` 或 `kill $(lsof -t -i :5002)` 關閉 hybrid server
 

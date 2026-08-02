@@ -21,8 +21,11 @@ jobs:
       # The unit tests are deliberately EasyOCR/PyTorch-free, so we install only
       # the lightweight runtime deps plus the dev tools — no multi-hundred-MB
       # torch download needed.
+      # ruff is pinned to the version locked in uv.lock — an unpinned install
+      # pulls the latest release, whose new rules can turn CI red without any
+      # code change. Bump this pin together with uv.lock.
       - name: Install dependencies
-        run: python -m pip install --upgrade pip numpy pillow requests pytest ruff
+        run: python -m pip install --upgrade pip numpy pillow requests pytest ruff==0.15.20
 
       - name: Lint
         run: ruff check .

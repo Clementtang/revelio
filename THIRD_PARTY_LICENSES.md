@@ -141,6 +141,25 @@ You may obtain a copy of the License at
 
 ---
 
+## pdf-inspector (External Tool, Not Bundled)
+
+- **Repository**: https://github.com/firecrawl/pdf-inspector
+- **License**: MIT License
+- **Copyright**: Copyright (c) Firecrawl
+- **Usage**: Invoked from the `/revelio` skill for pre-flight PDF classification (detecting scanned pages and undecodable text layers before conversion). Users install it independently into their own Python venv (`~/odl-env/`) — Revelio does not bundle, redistribute, or modify this project's code. This listing is provided for transparency and attribution.
+
+```
+MIT License
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software.
+```
+
+---
+
 ## Summary
 
 | Library            | License      | Integration           | Compatibility    |
@@ -152,5 +171,6 @@ You may obtain a copy of the License at
 | MCP                | MIT          | Python dependency     | ✓ MIT-compatible |
 | PyTorch            | BSD 3-Clause | Transitive dependency | ✓ MIT-compatible |
 | opendataloader-pdf | Apache 2.0   | External subprocess   | ✓ MIT-compatible |
+| pdf-inspector      | MIT          | External subprocess   | ✓ MIT-compatible |
 
 All dependencies and external tools are compatible with this project's MIT License.

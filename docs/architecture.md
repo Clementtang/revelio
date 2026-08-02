@@ -7,6 +7,8 @@ Revelio 是本地隱私優先的文件處理工具，整合於 Claude Code。它
 - **EasyOCR** — 辨識圖片中的文字
 - **opendataloader-pdf** — 解析 PDF 結構（表格、標題、閱讀順序），掃描件可啟用 hybrid OCR
 
+PDF 路徑另有一個輔助工具：**pdf-inspector** 在轉換前做毫秒級前置偵測，判斷文字層是否可用、是否需要 force-OCR（見 [ADR-004](decisions/004-pdf-preflight-detection.md)）。
+
 使用者透過統一的 `/revelio` skill 進入，skill 依副檔名自動選擇引擎；圖片 OCR 也可由 MCP server 直接呼叫。
 
 ```
@@ -78,6 +80,10 @@ Revelio 是本地隱私優先的文件處理工具，整合於 Claude Code。它
 
 由使用者自行安裝於獨立 venv（`~/odl-env/`），skill 以子程序呼叫其 hybrid server 進行 PDF 轉換。Revelio 不打包、不修改此工具，僅呼叫。詳見 [ADR-003](decisions/003-pdf-processing-architecture.md)。
 
+### 5. pdf-inspector（外部工具・前置偵測）
+
+安裝於同一個 venv（`~/odl-env/`）。skill 在啟動 hybrid server 前先呼叫 `pdf_inspector.detect_pdf()` 分析 PDF 結構——偵測掃描件、CID 字型缺 ToUnicode、向量描邊文字等文字層不可用的情況，回報逐頁的 `pages_needing_ocr` 與原因碼，據此決定是否加 `--force-ocr` 啟動。純本地 Rust 結構分析，毫秒級完成。詳見 [ADR-004](decisions/004-pdf-preflight-detection.md)。
+
 ## Data Flow
 
 ### MCP Mode（快速模式・僅圖片）
@@ -95,7 +101,10 @@ User: /revelio <file> → Claude → 依副檔名判斷引擎
                                      │
                     ┌────────────────┴────────────────┐
                     ▼ 圖片                             ▼ PDF
-             ocr_to_file.py                    opendataloader-pdf
+             ocr_to_file.py                pdf-inspector 前置偵測
+                    │                        （決定 force-OCR 與否）
+                    │                                  ▼
+                    │                          opendataloader-pdf
                     │                                  │
                     └────────────────┬─────────────────┘
                                      ▼ 結果存檔
@@ -167,3 +176,4 @@ EasyOCR 支援 80+ 語言，opendataloader-pdf hybrid mode 亦同。兩者皆使
 - uv（Python 套件管理器）
 - EasyOCR + PyTorch（圖片 OCR）
 - Java 11+ 與 opendataloader-pdf（PDF 解析，外部安裝）
+- pdf-inspector（PDF 前置偵測，外部安裝於 `~/odl-env/`）
