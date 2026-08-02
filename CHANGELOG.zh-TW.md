@@ -6,6 +6,14 @@
 
 ## [未發布]
 
+### 新增
+
+- **PDF 前置偵測**（透過 [pdf-inspector](https://github.com/firecrawl/pdf-inspector)）— `/revelio` skill 在啟動 hybrid server 前先以毫秒級結構分析偵測掃描件與不可解碼的文字層（CID 字型缺 ToUnicode CMap、向量描邊文字），事先決定 `--force-ocr` 模式，取代原本的檔名猜測／試錯流程與 30–40 秒的 server 重啟成本 — 見 [ADR-004](docs/decisions/004-pdf-preflight-detection.md)
+
+### 變更
+
+- 啟發式 force-OCR 判斷（檔名猜測、輸出亂碼後重試）降級為 pdf-inspector 不可用時的後備方案
+
 ## [0.5.0] - 2026-04
 
 ### 新增
