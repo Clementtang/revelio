@@ -230,6 +230,7 @@ revelio/
 
 ## 歷程
 
+- **2026-08** — 新增 PDF 前置偵測（[pdf-inspector](https://github.com/firecrawl/pdf-inspector)）：skill 改以毫秒級結構分析決定 force-OCR 模式，取代檔名猜測與試錯重啟。見 [ADR-004](docs/decisions/004-pdf-preflight-detection.md)。
 - **2026-04** — 整合 PDF 處理功能（opendataloader-pdf）；skill 從 `/ocr-local` 改名為 `/revelio`，MCP server 從 `easyocr` 改名為 `revelio`
 - **2026-02** — 曾嘗試向 [WindoC/easyocr-mcp](https://github.com/WindoC/easyocr-mcp) 提交 upstream 貢獻（討論停滯）。[Clementtang/easyocr-mcp fork](https://github.com/Clementtang/easyocr-mcp) 已封存，Revelio 自行維護 MCP server 實作。詳見 [ADR-002](docs/decisions/002-memory-management-strategy.md)。
 

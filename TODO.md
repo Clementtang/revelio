@@ -50,10 +50,15 @@
 ## Future Improvements
 
 - [ ] 評估是否移植 subprocess isolation 記憶體管理方案（供 CUDA 環境），見 [ADR-002](docs/decisions/002-memory-management-strategy.md)
+- [ ] **逐頁 OCR 分流** — pdf-inspector 的偵測是逐頁的（`pages_needing_ocr` + 原因碼），但 `--force-ocr` 是整個 hybrid server 的旗標，混合文件（部分頁面正常、部分需 OCR）目前仍整份走同一模式。待 opendataloader-pdf 支援逐次轉換指定模式後再評估，見 [ADR-004](docs/decisions/004-pdf-preflight-detection.md)
+- [ ] **PDF 路徑的 fixture 驗收測試** — 目前 PDF 流程的邏輯全在 SKILL.md prose 中，無自動化測試。可仿 pdf-inspector 的 golden snapshot 做法：固定幾個 fixture PDF（標準英文、CID 字型無 ToUnicode 中文、無框線表格），端到端比對輸出 Markdown，防止外部引擎升版時輸出悄悄劣化
+- [ ] **升版 ruff 時 triage 0.16.x 新規則的 11 個發現**（DTZ005、BLE001、FURB122、PLW1510 等）— CI 目前釘在 0.15.20；其中 BLE001（catch blind `Exception`）是 MCP server 刻意的錯誤正規化設計，升版時決定要改寫或加 `noqa`/規則排除
+- [ ] **新增 CLAUDE.md** — 濃縮架構地圖、提交前檢查（ruff/pytest）、repo 慣例（雙語文件同步清單、rename 同步清單），供開發時的 Claude Code 使用
 
 ## 已完成
 
 - [x] 在 README 說明 EasyOCR MCP 的來源與授權 — README「History」段與 `THIRD_PARTY_LICENSES.md` 均已註明來源與 Apache 2.0 授權
+- [x] PDF force-OCR 決策自動化 — 以 [pdf-inspector](https://github.com/firecrawl/pdf-inspector) 前置偵測取代檔名猜測／試錯重啟（2026-08，見 [ADR-004](docs/decisions/004-pdf-preflight-detection.md)）
 
 ## 已廢止
 

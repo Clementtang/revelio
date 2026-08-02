@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08
+
 ### Added
 
 - **Pre-flight PDF detection** via [pdf-inspector](https://github.com/firecrawl/pdf-inspector) — before starting the hybrid server, the `/revelio` skill now runs a millisecond structural analysis that detects scanned pages and undecodable text layers (CID fonts without ToUnicode CMap, vector-outlined text) and picks the `--force-ocr` mode up front, replacing the old filename-guess / trial-and-error flow and its 30–40 s server restarts — see [ADR-004](docs/decisions/004-pdf-preflight-detection.md)
@@ -13,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - The heuristic force-OCR decision (guess from filename, retry after garbled output) is now only a fallback for when pdf-inspector is unavailable
+
+### Fixed
+
+- Pinned ruff in CI to the version locked in `uv.lock` — an unpinned install pulled ruff 0.16.x, whose new rules turned CI red on every PR with no code change
 
 ## [0.5.0] - 2026-04
 
@@ -126,6 +132,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 | Version | Date       | Highlights                        |
 | ------- | ---------- | --------------------------------- |
+| 0.6.0   | 2026-08    | Pre-flight PDF detection (pdf-inspector) |
 | 0.5.0   | 2026-04    | PDF support, /revelio rebrand, memory mgmt |
 | 0.4.1   | 2026-02-02 | Bug fixes & error handling        |
 | 0.4.0   | 2026-02-02 | Source code & bilingual docs      |
