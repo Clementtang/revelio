@@ -230,6 +230,7 @@ revelio/
 
 ## History
 
+- **2026-08** — Added pre-flight PDF detection via [pdf-inspector](https://github.com/firecrawl/pdf-inspector): the skill now decides the force-OCR mode from a millisecond structural analysis instead of filename guessing and trial-and-error restarts. See [ADR-004](docs/decisions/004-pdf-preflight-detection.md).
 - **2026-04** — Merged PDF processing via opendataloader-pdf; renamed skill from `/ocr-local` to `/revelio` and MCP server from `easyocr` to `revelio`
 - **2026-02** — Attempted upstream contribution to [WindoC/easyocr-mcp](https://github.com/WindoC/easyocr-mcp) (stalled). The [Clementtang/easyocr-mcp fork](https://github.com/Clementtang/easyocr-mcp) is now archived; Revelio maintains its own MCP server implementation. See [ADR-002](docs/decisions/002-memory-management-strategy.md) for context.
 

@@ -5,6 +5,12 @@ Privacy-first document processing skill for Claude Code. A single entry point
 opendataloader-pdf. Results are saved locally and Claude only reads them with
 explicit user consent.
 
+For PDFs, the skill first runs a millisecond pre-flight check with
+[pdf-inspector](https://github.com/firecrawl/pdf-inspector) to detect scanned
+pages and undecodable text layers, and picks the right OCR mode before the
+conversion server starts (see
+[ADR-004](../../docs/decisions/004-pdf-preflight-detection.md)).
+
 ## Files
 
 | File       | Description                                  |
@@ -34,7 +40,8 @@ In Claude Code, type `/revelio` with a file path:
 
 Then:
 
-1. The skill routes to the right engine and runs it locally.
+1. The skill routes to the right engine (for PDFs, after the pdf-inspector
+   pre-flight check) and runs it locally.
 2. Results are saved to disk (`~/revelio/ocr_results/` for images,
    `~/odl-output/` for PDFs).
 3. You choose whether to let Claude read the results.
