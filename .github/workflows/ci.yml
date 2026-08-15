@@ -25,7 +25,7 @@ jobs:
       # pulls the latest release, whose new rules can turn CI red without any
       # code change. Bump this pin together with uv.lock.
       - name: Install dependencies
-        run: python -m pip install --upgrade pip numpy pillow requests pytest ruff==0.15.20
+        run: python -m pip install --upgrade pip numpy pillow requests mcp pytest ruff==0.15.20
 
       - name: Lint
         run: ruff check .

@@ -17,6 +17,7 @@ from ocr_common import (
     MAX_IMAGE_BYTES,
     get_default_languages,
     get_gpu_flag,
+    get_unload_jobdone,
     get_unload_timeout,
     image_bytes_to_array,
     validate_image_bytes,
@@ -26,19 +27,27 @@ from ocr_common import (
 mcp = FastMCP("Revelio")
 
 # Reader cache keyed by sorted language tuple, guarded by a lock because the
-# auto-unload timer fires on a background thread.
+# auto-unload timer fires on a background thread. _in_flight (same lock) counts
+# OCR calls in progress so the timer never unloads a model mid-call — gc.collect()
+# concurrent with an MPS inference is a timing ADR-002 never validated.
 _reader_cache = {}
 _reader_lock = threading.Lock()
 _unload_timer: threading.Timer | None = None
+_in_flight = 0
+
+
+def _cancel_unload_timer() -> None:
+    global _unload_timer
+    if _unload_timer is not None:
+        _unload_timer.cancel()
+        _unload_timer = None
 
 
 def _schedule_unload() -> None:
     """(Re)arm the idle auto-unload timer if EASYOCR_UNLOAD_TIMEOUT is set."""
     global _unload_timer
+    _cancel_unload_timer()
     timeout = get_unload_timeout()
-    if _unload_timer is not None:
-        _unload_timer.cancel()
-        _unload_timer = None
     if timeout > 0:
         _unload_timer = threading.Timer(timeout, _unload_readers)
         _unload_timer.daemon = True
@@ -46,14 +55,42 @@ def _schedule_unload() -> None:
 
 
 def _unload_readers() -> int:
-    """Drop cached readers and force garbage collection. Returns count freed."""
+    """Drop cached readers and force garbage collection. Returns count freed.
+
+    No-op while an OCR call is in flight: a stale timer must not trigger
+    gc.collect() underneath a running inference.
+    """
     import gc
 
     with _reader_lock:
+        if _in_flight > 0:
+            return 0
         freed = len(_reader_cache)
         _reader_cache.clear()
     gc.collect()
     return freed
+
+
+def _job_start() -> None:
+    """Mark an OCR call in flight and disarm any pending unload timer."""
+    global _in_flight
+    with _reader_lock:
+        _in_flight += 1
+    _cancel_unload_timer()
+
+
+def _job_done() -> None:
+    """Mark an OCR call finished (success or failure) and re-arm unloading."""
+    global _in_flight
+    with _reader_lock:
+        _in_flight = max(0, _in_flight - 1)
+        idle = _in_flight == 0
+    if not idle:
+        return
+    if get_unload_jobdone():
+        _unload_readers()
+    else:
+        _schedule_unload()
 
 
 def get_reader(languages: list[str]):
@@ -85,13 +122,14 @@ def _run_ocr(
     width_ths: float,
     height_ths: float,
 ) -> list:
-    """Run EasyOCR on an image (path or numpy array) and re-arm the unload timer.
+    """Run EasyOCR on an image (path or numpy array) under in-flight protection.
 
     ``image`` may be a file path (str) or an RGB numpy array; EasyOCR accepts both.
     """
-    reader = get_reader(get_default_languages())
+    _job_start()
     try:
-        result = reader.readtext(
+        reader = get_reader(get_default_languages())
+        return reader.readtext(
             image,
             detail=detail,
             paragraph=paragraph,
@@ -99,8 +137,7 @@ def _run_ocr(
             height_ths=height_ths,
         )
     finally:
-        _schedule_unload()
-    return result
+        _job_done()
 
 
 @mcp.tool(title="OCR Image from Base64")
@@ -244,10 +281,7 @@ def unload_ocr_models() -> str:
     Models reload automatically on the next OCR request. Useful when the server
     stays running but OCR is idle. See ADR-002 for the memory-management rationale.
     """
-    global _unload_timer
-    if _unload_timer is not None:
-        _unload_timer.cancel()
-        _unload_timer = None
+    _cancel_unload_timer()
     freed = _unload_readers()
     return f"Unloaded {freed} cached OCR reader(s)."
 

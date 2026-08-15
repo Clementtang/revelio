@@ -44,7 +44,7 @@ def test_get_gpu_flag_falsy(monkeypatch, value):
 
 def test_get_unload_timeout_default(monkeypatch):
     monkeypatch.delenv("EASYOCR_UNLOAD_TIMEOUT", raising=False)
-    assert ocr_common.get_unload_timeout() == 0
+    assert ocr_common.get_unload_timeout() == ocr_common.DEFAULT_UNLOAD_TIMEOUT == 300
 
 
 def test_get_unload_timeout_parses(monkeypatch):
@@ -52,14 +52,36 @@ def test_get_unload_timeout_parses(monkeypatch):
     assert ocr_common.get_unload_timeout() == 600
 
 
-def test_get_unload_timeout_invalid_falls_back_to_zero(monkeypatch):
-    monkeypatch.setenv("EASYOCR_UNLOAD_TIMEOUT", "not-a-number")
+def test_get_unload_timeout_zero_disables(monkeypatch):
+    monkeypatch.setenv("EASYOCR_UNLOAD_TIMEOUT", "0")
     assert ocr_common.get_unload_timeout() == 0
+
+
+def test_get_unload_timeout_invalid_falls_back_to_default(monkeypatch):
+    monkeypatch.setenv("EASYOCR_UNLOAD_TIMEOUT", "not-a-number")
+    assert ocr_common.get_unload_timeout() == ocr_common.DEFAULT_UNLOAD_TIMEOUT
 
 
 def test_get_unload_timeout_negative_clamped(monkeypatch):
     monkeypatch.setenv("EASYOCR_UNLOAD_TIMEOUT", "-5")
     assert ocr_common.get_unload_timeout() == 0
+
+
+def test_get_unload_jobdone_default_off(monkeypatch):
+    monkeypatch.delenv("EASYOCR_UNLOAD_JOBDONE", raising=False)
+    assert ocr_common.get_unload_jobdone() is False
+
+
+@pytest.mark.parametrize("value", ["true", "True", "1", "yes", "on"])
+def test_get_unload_jobdone_truthy(monkeypatch, value):
+    monkeypatch.setenv("EASYOCR_UNLOAD_JOBDONE", value)
+    assert ocr_common.get_unload_jobdone() is True
+
+
+@pytest.mark.parametrize("value", ["false", "0", "no", "", "garbage"])
+def test_get_unload_jobdone_falsy(monkeypatch, value):
+    monkeypatch.setenv("EASYOCR_UNLOAD_JOBDONE", value)
+    assert ocr_common.get_unload_jobdone() is False
 
 
 def test_validate_image_bytes_accepts_valid_png():

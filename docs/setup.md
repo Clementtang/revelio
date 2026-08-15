@@ -50,11 +50,12 @@ MCP server 由 Claude Code **就地引用**，不需複製到其他位置。在 
 
 可選的環境變數：
 
-| 變數                     | 作用                                | 預設值         |
-| ------------------------ | ----------------------------------- | -------------- |
-| `EASYOCR_LANGUAGES`      | OCR 語言（逗號分隔）                 | `ch_tra,en`    |
-| `EASYOCR_GPU`            | 是否使用 GPU/MPS（`true`/`false`）   | `false`（CPU） |
-| `EASYOCR_UNLOAD_TIMEOUT` | 閒置多少秒後自動卸載模型（`0` 停用） | `0`            |
+| 變數                     | 作用                                     | 預設值         |
+| ------------------------ | ---------------------------------------- | -------------- |
+| `EASYOCR_LANGUAGES`      | OCR 語言（逗號分隔）                     | `ch_tra,en`    |
+| `EASYOCR_GPU`            | 是否使用 GPU/MPS（`true`/`false`）       | `false`（CPU） |
+| `EASYOCR_UNLOAD_TIMEOUT` | 閒置多少秒後自動卸載模型（`0` 停用）     | `300`          |
+| `EASYOCR_UNLOAD_JOBDONE` | 每次辨識完成後立即卸載（`true`/`false`） | `false`        |
 
 ### 4. 安裝 Skill
 
@@ -131,7 +132,7 @@ Claude: 讓我幫你辨識這張圖片...
 
 ### EasyOCR 載入緩慢
 
-首次載入模型需要時間，後續會快很多。若 server 常駐但久未使用，可設定 `EASYOCR_UNLOAD_TIMEOUT` 讓模型閒置後自動卸載，或呼叫 `unload_ocr_models` 工具手動釋放。
+首次載入模型需要時間，後續會快很多。模型閒置超過 `EASYOCR_UNLOAD_TIMEOUT`（預設 300 秒）會自動卸載以釋放約 2.6GB 記憶體，下次辨識時重新載入；也可呼叫 `unload_ocr_models` 工具手動釋放，或設 `EASYOCR_UNLOAD_JOBDONE=1` 讓每次辨識完成後立即卸載。
 
 ### CUDA / GPU 問題
 

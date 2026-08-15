@@ -156,12 +156,13 @@ uv run python ocr_to_file.py image.png /custom/path
 
 ## Configuration
 
-| 環境變數                 | 作用                                   | 預設值                  |
-| ------------------------ | -------------------------------------- | ----------------------- |
-| `EASYOCR_LANGUAGES`      | OCR 語言（逗號分隔）                    | `ch_tra,en`             |
-| `EASYOCR_GPU`            | 是否使用 GPU/MPS（`true`/`false`）      | `false`（CPU）          |
-| `EASYOCR_UNLOAD_TIMEOUT` | 閒置多少秒後自動卸載模型（`0` 停用）    | `0`                     |
-| `REVELIO_OUTPUT_DIR`     | 圖片 OCR 輸出目錄                       | `~/revelio/ocr_results` |
+| 環境變數                 | 作用                                     | 預設值                  |
+| ------------------------ | ---------------------------------------- | ----------------------- |
+| `EASYOCR_LANGUAGES`      | OCR 語言（逗號分隔）                     | `ch_tra,en`             |
+| `EASYOCR_GPU`            | 是否使用 GPU/MPS（`true`/`false`）       | `false`（CPU）          |
+| `EASYOCR_UNLOAD_TIMEOUT` | 閒置多少秒後自動卸載模型（`0` 停用）     | `300`                   |
+| `EASYOCR_UNLOAD_JOBDONE` | 每次辨識完成後立即卸載（`true`/`false`） | `false`                 |
+| `REVELIO_OUTPUT_DIR`     | 圖片 OCR 輸出目錄                        | `~/revelio/ocr_results` |
 
 ## Language Support
 

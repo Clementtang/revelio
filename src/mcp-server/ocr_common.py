@@ -36,15 +36,28 @@ def get_gpu_flag() -> bool:
     return os.getenv("EASYOCR_GPU", "false").strip().lower() in ("1", "true", "yes", "on")
 
 
+DEFAULT_UNLOAD_TIMEOUT = 300
+
+
 def get_unload_timeout() -> int:
     """Idle seconds before cached OCR models are auto-unloaded.
 
-    From ``EASYOCR_UNLOAD_TIMEOUT``. ``0`` (the default) disables auto-unload.
+    From ``EASYOCR_UNLOAD_TIMEOUT``. Defaults to 300; ``0`` disables auto-unload.
+    A malformed value falls back to the default rather than silently disabling.
     """
     try:
-        return max(0, int(os.getenv("EASYOCR_UNLOAD_TIMEOUT", "0")))
+        return max(0, int(os.getenv("EASYOCR_UNLOAD_TIMEOUT", str(DEFAULT_UNLOAD_TIMEOUT))))
     except ValueError:
-        return 0
+        return DEFAULT_UNLOAD_TIMEOUT
+
+
+def get_unload_jobdone() -> bool:
+    """Whether to unload models right after every OCR call, from ``EASYOCR_UNLOAD_JOBDONE``.
+
+    Defaults to ``False``; more aggressive than the idle timeout, useful when OCR
+    is a one-off in an otherwise long-lived session.
+    """
+    return os.getenv("EASYOCR_UNLOAD_JOBDONE", "false").strip().lower() in ("1", "true", "yes", "on")
 
 
 def validate_image_bytes(image_bytes: bytes) -> None:

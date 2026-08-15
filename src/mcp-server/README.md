@@ -6,12 +6,12 @@ privacy-preserving, save-to-file flow use the `/revelio` skill instead.
 
 ## Files
 
-| File             | Description                                              |
-| ---------------- | ------------------------------------------------------- |
-| `server.py`      | Main MCP server implementation                          |
+| File             | Description                                                 |
+| ---------------- | ----------------------------------------------------------- |
+| `server.py`      | Main MCP server implementation                              |
 | `ocr_to_file.py` | Standalone script for the privacy-first (save-to-file) flow |
-| `ocr_common.py`  | Shared helpers (language/GPU config, image validation)  |
-| `pyproject.toml` | Python dependencies                                     |
+| `ocr_common.py`  | Shared helpers (language/GPU config, image validation)      |
+| `pyproject.toml` | Python dependencies                                         |
 
 ## Installation
 
@@ -51,22 +51,25 @@ Then restart Claude Code.
 All configuration is via environment variables (set them in the `env` block above
 or in your shell):
 
-| Variable                 | Purpose                                        | Default        |
-| ------------------------ | ---------------------------------------------- | -------------- |
-| `EASYOCR_LANGUAGES`      | OCR languages (comma-separated)                | `ch_tra,en`    |
-| `EASYOCR_GPU`            | Use GPU/MPS acceleration (`true`/`false`)      | `false` (CPU)  |
-| `EASYOCR_UNLOAD_TIMEOUT` | Seconds idle before models auto-unload (`0` off) | `0`          |
-| `REVELIO_OUTPUT_DIR`     | Output dir for `ocr_to_file.py`                | `~/revelio/ocr_results/` |
+| Variable                 | Purpose                                            | Default                  |
+| ------------------------ | -------------------------------------------------- | ------------------------ |
+| `EASYOCR_LANGUAGES`      | OCR languages (comma-separated)                    | `ch_tra,en`              |
+| `EASYOCR_GPU`            | Use GPU/MPS acceleration (`true`/`false`)          | `false` (CPU)            |
+| `EASYOCR_UNLOAD_TIMEOUT` | Seconds idle before models auto-unload (`0` off)   | `300`                    |
+| `EASYOCR_UNLOAD_JOBDONE` | Unload right after every OCR call (`true`/`false`) | `false`                  |
+| `REVELIO_OUTPUT_DIR`     | Output dir for `ocr_to_file.py`                    | `~/revelio/ocr_results/` |
 
 Default language: `ch_tra,en` (Traditional Chinese + English). EasyOCR supports
 80+ languages — e.g. `EASYOCR_LANGUAGES="ch_tra,en,ja"`.
 
 ## Memory Management
 
-EasyOCR/PyTorch are imported lazily on first OCR request and cached. To release
-the ~2.6 GB they hold: set `EASYOCR_UNLOAD_TIMEOUT` for automatic idle unload, or
-call the `unload_ocr_models` tool. See
-[ADR-002](../../docs/decisions/002-memory-management-strategy.md).
+EasyOCR/PyTorch are imported lazily on first OCR request and cached. The ~2.6 GB
+they hold is released automatically after 300 idle seconds (tune or disable via
+`EASYOCR_UNLOAD_TIMEOUT`), immediately after every call with
+`EASYOCR_UNLOAD_JOBDONE=1`, or on demand via the `unload_ocr_models` tool. An
+in-flight guard ensures models are never unloaded while a recognition is
+running. See [ADR-002](../../docs/decisions/002-memory-management-strategy.md).
 
 ## Development
 

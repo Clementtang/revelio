@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+
+- `EASYOCR_UNLOAD_JOBDONE` mode: unload OCR models immediately after every call (default off)
+
+### Changed
+
+- Idle auto-unload is now on by default (`EASYOCR_UNLOAD_TIMEOUT` defaults to 300s instead of 0/disabled); malformed values fall back to the default instead of silently disabling
+- In-flight guard: models are never unloaded while a recognition is running (a stale idle timer could previously fire mid-call)
+
 ## [0.6.0] - 2026-08
 
 ### Added
