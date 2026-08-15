@@ -1,0 +1,93 @@
+{
+  "document": "tsmc-2025q3-consolidated-zh",
+  "source": {
+    "title": "台積電 2025 Q3 合併財務報告（中文版）",
+    "url": "https://investor.tsmc.com/zh-hant/quarterly-results/2025/q3",
+    "notes": "Public filing, Chinese version of tsmc-2025q3-consolidated-en. CID-keyed fonts without ToUnicode CMap: the text layer is unreadable, so conversion must go through the force-OCR path (visual OCR of rendered pages). All monetary values are identical to the frozen English ground truth and inherit its verification; labels follow the document's own wording (TIFRS statement captions). Built 2026-08-16, pending spot-check approval of the Chinese labels and headings, then frozen."
+  },
+  "structure": {
+    "headings": ["合併資產負債表", "合併綜合損益表"],
+    "tables": [
+      { "name": "balance_sheet", "min_rows": 55, "columns": 8 },
+      { "name": "income_statement", "min_rows": 35, "columns": 10 }
+    ]
+  },
+  "key_figures": [
+    {
+      "label": "現金及約當現金",
+      "values": ["2470759384", "2127627043", "1886780555"]
+    },
+    {
+      "label": "流動資產合計",
+      "values": ["3436015312", "3088352120", "2773913863"]
+    },
+    {
+      "label": "非流動資產合計",
+      "values": ["3918091764", "3603585880", "3391744313"]
+    },
+    {
+      "label": "資產總計",
+      "values": ["7354107076", "6691938000", "6165658176"]
+    },
+    {
+      "label": "流動負債合計",
+      "values": ["1275906624", "1264524964", "1080399099"]
+    },
+    {
+      "label": "非流動負債合計",
+      "values": ["1042622650", "1103837171", "1063336786"]
+    },
+    {
+      "label": "負債合計",
+      "values": ["2318529274", "2368362135", "2143735885"]
+    },
+    {
+      "label": "權益合計",
+      "values": ["5035577802", "4323575865", "4021922291"]
+    },
+    {
+      "label": "營業收入淨額",
+      "values": ["989918318", "759692143", "2762963851", "2025846521"]
+    },
+    {
+      "label": "營業成本",
+      "values": ["401375489", "320346477", "1133656708", "913871108"]
+    },
+    {
+      "label": "營業毛利",
+      "values": ["588542829", "439345666", "1629307143", "1111975413"]
+    },
+    {
+      "label": "研究發展費用",
+      "values": ["63742245", "52783826", "181569457", "146950466"]
+    },
+    {
+      "label": "管理費用",
+      "values": ["20048234", "22890591", "63887355", "58317959"]
+    },
+    {
+      "label": "行銷費用",
+      "values": ["3973966", "3404487", "12002028", "9463070"]
+    },
+    {
+      "label": "營業淨利",
+      "values": ["500684818", "360766289", "1371189264", "896340137"]
+    },
+    {
+      "label": "稅前淨利",
+      "values": ["525369023", "384186852", "1449299639", "957040631"]
+    },
+    {
+      "label": "所得稅費用",
+      "values": ["73613661", "59106682", "239318192", "159077760"]
+    },
+    {
+      "label": "本期淨利",
+      "values": ["451755362", "325080170", "1209981447", "797962871"]
+    },
+    {
+      "label": "本期綜合損益總額",
+      "values": ["546957298", "304023892", "1082578430", "831645140"]
+    }
+  ]
+}
