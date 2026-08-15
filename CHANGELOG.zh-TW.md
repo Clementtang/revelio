@@ -8,6 +8,8 @@
 
 ### 新增
 
+- `benchmark/`：轉換品質回歸測試工具，附 TSMC 2025 Q3 英文合併財報 ground truth（0.6.0 baseline：26/27）
+
 - `EASYOCR_UNLOAD_JOBDONE` 模式：每次辨識完成後立即卸載模型（預設關閉）
 
 ### 變更

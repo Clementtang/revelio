@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- `benchmark/`: regression benchmark runner with ground truth for the TSMC 2025 Q3 English consolidated statements (0.6.0 baseline: 26/27)
+
 - `EASYOCR_UNLOAD_JOBDONE` mode: unload OCR models immediately after every call (default off)
 
 ### Changed
