@@ -3,7 +3,7 @@
   "source": {
     "title": "TSMC 2025 Q3 Consolidated Financial Statements (English)",
     "url": "https://investor.tsmc.com/english/quarterly-results/2025/q3",
-    "notes": "Public filing. Covers the consolidated balance sheet and statements of comprehensive income (first statement pages). Standard fonts with Unicode mappings; hybrid mode extracts the text layer directly. Income-statement figures human-verified (README example tables); balance-sheet figures verified by arithmetic cross-footing (subtotals sum to totals). Ground truth built 2026-08-16, pending spot-check approval, then frozen."
+    "notes": "Public filing. Covers the consolidated balance sheet and statements of comprehensive income (first statement pages). Standard fonts with Unicode mappings; hybrid mode extracts the text layer directly. Income-statement figures human-verified (README example tables); balance-sheet figures verified by arithmetic cross-footing (subtotals sum to totals). Spot-checked 2026-08-16 against the condensed FS.pdf on the IR page (values in NTD millions verify the first 7 significant digits; the condensed version carries rounding plugs of +/-1 million on R&D and income tax to make columns foot, which does not contradict these thousands-level figures). FROZEN 2026-08-16 (Clement approved); any change must be recorded here."
   },
   "structure": {
     "headings": [
