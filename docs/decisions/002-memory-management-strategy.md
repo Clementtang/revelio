@@ -58,6 +58,8 @@ WindoC 的 README 預設安裝指令使用 `cu128`（CUDA 12.8），推測其測
 
 如果上游採用 subprocess isolation 方案，應評估是否跟進。該方案的優劣：
 
+> 更新（2026-08-15）：上游 WindoC/easyocr-mcp 已於 2026-04-15 將記憶體管理合併進 master（背景執行緒輪詢 + `gc.collect()`，含 `EASYOCR_UNLOAD_TIMEOUT` 與 `unload_jobdone`），**未採用** subprocess isolation，本節「上游若採用應評估跟進」的前提目前不成立，維持觀察即可。逐項比對見 `docs/research/watchlist/easyocr-mcp-memory.md`。同日本專案補強：in-flight 保護（辨識進行中不觸發卸載）、`EASYOCR_UNLOAD_JOBDONE` 模式、閒置卸載預設值改為 300 秒。
+
 **優點**：
 
 - 跨平台可靠（MPS、CUDA、CPU 皆適用）

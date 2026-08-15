@@ -8,7 +8,7 @@
 
 - **Issue**: https://github.com/WindoC/easyocr-mcp/issues/1
 - **Created**: 2026-02-03
-- **Status**: 停滯（自 2026-02-05 起上游未回應，超過 2 個月）
+- **Status**: 上游已實作（2026-08-14 確認）。Issue 本身仍為 open、上游未在 issue 上回覆或關閉，但功能已於 2026-04-15 合併進 master：背景執行緒閒置自動卸載（`EASYOCR_UNLOAD_TIMEOUT`，預設 300 秒）、`unload_ocr_models` tool、每次呼叫後卸載選項（`unload_jobdone`）。詳見 [調研報告](docs/research/watchlist/easyocr-mcp-memory.md)
 - **My Fork**: https://github.com/Clementtang/easyocr-mcp
 
 **內容**：提交 smart memory management 功能
