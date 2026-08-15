@@ -1,0 +1,97 @@
+{
+  "document": "tsmc-2025q3-consolidated-en",
+  "source": {
+    "title": "TSMC 2025 Q3 Consolidated Financial Statements (English)",
+    "url": "https://investor.tsmc.com/english/quarterly-results/2025/q3",
+    "notes": "Public filing. Covers the consolidated balance sheet and statements of comprehensive income (first statement pages). Standard fonts with Unicode mappings; hybrid mode extracts the text layer directly. Income-statement figures human-verified (README example tables); balance-sheet figures verified by arithmetic cross-footing (subtotals sum to totals). Ground truth built 2026-08-16, pending spot-check approval, then frozen."
+  },
+  "structure": {
+    "headings": [
+      "CONSOLIDATED BALANCE SHEETS",
+      "CONSOLIDATED STATEMENTS OF COMPREHENSIVE INCOME"
+    ],
+    "tables": [
+      { "name": "balance_sheet", "min_rows": 55, "columns": 7 },
+      { "name": "income_statement", "min_rows": 35, "columns": 9 }
+    ]
+  },
+  "key_figures": [
+    {
+      "label": "Cash and cash equivalents",
+      "values": ["2470759384", "2127627043", "1886780555"]
+    },
+    {
+      "label": "Total current assets",
+      "values": ["3436015312", "3088352120", "2773913863"]
+    },
+    {
+      "label": "Total noncurrent assets",
+      "values": ["3918091764", "3603585880", "3391744313"]
+    },
+    {
+      "label": "Total current liabilities",
+      "values": ["1275906624", "1264524964", "1080399099"]
+    },
+    {
+      "label": "Total noncurrent liabilities",
+      "values": ["1042622650", "1103837171", "1063336786"]
+    },
+    {
+      "label": "Total liabilities",
+      "values": ["2318529274", "2368362135", "2143735885"]
+    },
+    {
+      "label": "Total equity",
+      "values": ["5035577802", "4323575865", "4021922291"]
+    },
+    { "label": "TOTAL", "values": ["7354107076", "6691938000", "6165658176"] },
+    {
+      "label": "NET REVENUE",
+      "values": ["989918318", "759692143", "2762963851", "2025846521"]
+    },
+    {
+      "label": "COST OF REVENUE",
+      "values": ["401375489", "320346477", "1133656708", "913871108"]
+    },
+    {
+      "label": "GROSS PROFIT",
+      "values": ["588542829", "439345666", "1629307143", "1111975413"]
+    },
+    {
+      "label": "Research and development",
+      "values": ["63742245", "52783826", "181569457", "146950466"]
+    },
+    {
+      "label": "General and administrative",
+      "values": ["20048234", "22890591", "63887355", "58317959"]
+    },
+    {
+      "label": "Marketing",
+      "values": ["3973966", "3404487", "12002028", "9463070"]
+    },
+    {
+      "label": "Total operating expenses",
+      "values": ["87764445", "79078904", "257458840", "214731495"]
+    },
+    {
+      "label": "INCOME FROM OPERATIONS",
+      "values": ["500684818", "360766289", "1371189264", "896340137"]
+    },
+    {
+      "label": "INCOME BEFORE INCOME TAX",
+      "values": ["525369023", "384186852", "1449299639", "957040631"]
+    },
+    {
+      "label": "INCOME TAX EXPENSE",
+      "values": ["73613661", "59106682", "239318192", "159077760"]
+    },
+    {
+      "label": "NET INCOME",
+      "values": ["451755362", "325080170", "1209981447", "797962871"]
+    },
+    {
+      "label": "TOTAL COMPREHENSIVE INCOME",
+      "values": ["546957298", "304023892", "1082578430", "831645140"]
+    }
+  ]
+}
