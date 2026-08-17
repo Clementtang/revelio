@@ -25,6 +25,9 @@ Thumbs.db
 *.swp
 *.swo
 
+# Benchmark test PDFs (licensing and size; provenance recorded in ground-truth source.url/sha256)
+benchmark/fixtures/
+
 # OCR results (may contain sensitive data)
 ocr_results/*.txt
 !ocr_results/.gitkeep

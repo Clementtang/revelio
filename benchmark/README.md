@@ -27,7 +27,7 @@ exit code 0 表示全數通過；每項 FAIL 會列出缺的標題、列數不�
 PRD 規劃的四類文件（財報、CID、多欄論文、掃描件）已到齊。
 
 測試 PDF 不放進 repo（授權與體積考量），ground truth 的 `source.url` 與 `sha256` 記錄
-公開下載來源。掃描件由 multicolumn 原檔以 pymupdf 200dpi 光柵化生成（產生方式見其
+公開下載來源；本機工作副本統一歸檔在 `benchmark/fixtures/`（已列入 .gitignore）。掃描件由 multicolumn 原檔以 pymupdf 200dpi 光柵化生成（產生方式見其
 `source.notes`），內容相同、文字層歸零，兩份共用同一組期望值。
 
 ## Ground truth 建置準則

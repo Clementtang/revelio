@@ -2,8 +2,9 @@
   "document": "tsmc-2025q3-consolidated-en",
   "source": {
     "title": "TSMC 2025 Q3 Consolidated Financial Statements (English)",
-    "url": "https://investor.tsmc.com/english/quarterly-results/2025/q3",
-    "notes": "Public filing. Covers the consolidated balance sheet and statements of comprehensive income (first statement pages). Standard fonts with Unicode mappings; hybrid mode extracts the text layer directly. Income-statement figures human-verified (README example tables); balance-sheet figures verified by arithmetic cross-footing (subtotals sum to totals). Spot-checked 2026-08-16 against the condensed FS.pdf on the IR page (values in NTD millions verify the first 7 significant digits; the condensed version carries rounding plugs of +/-1 million on R&D and income tax to make columns foot, which does not contradict these thousands-level figures). FROZEN 2026-08-16 (Clement approved); any change must be recorded here."
+    "url": "https://investor.tsmc.com/sites/ir/financial-report/2025/TSMC%202025Q3%20Consolidated%20Financial%20Statements_E_0.pdf",
+    "notes": "Public filing. Covers the consolidated balance sheet and statements of comprehensive income (first statement pages). Standard fonts with Unicode mappings; hybrid mode extracts the text layer directly. Income-statement figures human-verified (README example tables); balance-sheet figures verified by arithmetic cross-footing (subtotals sum to totals). Spot-checked 2026-08-16 against the condensed FS.pdf on the IR page (values in NTD millions verify the first 7 significant digits; the condensed version carries rounding plugs of +/-1 million on R&D and income tax to make columns foot, which does not contradict these thousands-level figures). FROZEN 2026-08-16 (Clement approved); any change must be recorded here. 2026-08-18: metadata-only update after freeze (no check changed): recorded the direct download URL and sha256 of the copy re-fetched that day; local copy in benchmark/fixtures/ (gitignored).",
+    "sha256": "73439b90e6680cac1d39ba07e5a4ad3acbd92f941bf43f8396b38ccb822ac2e1"
   },
   "structure": {
     "headings": [
