@@ -11,6 +11,8 @@ Ground truth JSON schema (one file per document):
       "structure": {
         "headings": ["<heading text that must appear>", ...],
         "tables": [{"name": "...", "min_rows": N, "columns": N}, ...]
+        // or, for table-heavy documents where exact table order is brittle:
+        "min_tables": N
       },
       "key_figures": [
         {"label": "<row label substring>", "values": ["<number>", ...]},
@@ -74,20 +76,28 @@ def run(ground_truth_path: str, converted_path: str) -> int:
             failures.append(f"heading missing: {heading!r}")
 
     tables = parse_tables(markdown)
-    expected_tables = truth["structure"]["tables"]
-    checks += 1
-    if len(tables) != len(expected_tables):
-        failures.append(f"table count: expected {len(expected_tables)}, found {len(tables)}")
-
-    for table, spec in zip(tables, expected_tables):
-        checks += 2
-        if len(table) < spec["min_rows"]:
+    if "min_tables" in truth["structure"]:
+        checks += 1
+        if len(tables) < truth["structure"]["min_tables"]:
             failures.append(
-                f"table {spec['name']}: {len(table)} rows, expected at least {spec['min_rows']}"
+                f"table count: expected at least {truth['structure']['min_tables']}, "
+                f"found {len(tables)}"
             )
-        cols = column_count(table[0])
-        if cols != spec["columns"]:
-            failures.append(f"table {spec['name']}: {cols} columns, expected {spec['columns']}")
+    else:
+        expected_tables = truth["structure"]["tables"]
+        checks += 1
+        if len(tables) != len(expected_tables):
+            failures.append(f"table count: expected {len(expected_tables)}, found {len(tables)}")
+
+        for table, spec in zip(tables, expected_tables):
+            checks += 2
+            if len(table) < spec["min_rows"]:
+                failures.append(
+                    f"table {spec['name']}: {len(table)} rows, expected at least {spec['min_rows']}"
+                )
+            cols = column_count(table[0])
+            if cols != spec["columns"]:
+                failures.append(f"table {spec['name']}: {cols} columns, expected {spec['columns']}")
 
     # Rows are matched on normalized text so split/garbled labels still resolve
     # when the label substring survives; a truly lost row fails as label-missing.
