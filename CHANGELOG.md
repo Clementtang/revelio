@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - `benchmark/`: regression benchmark runner with ground truth for the TSMC 2025 Q3 English consolidated statements (0.6.0 baseline: 26/27)
 - `benchmark/`: Chinese (CID-font) ground truth for the same filing; force-OCR baseline 12/26 quantifies the visual-OCR fallback quality gap
+- `benchmark/`: two-column academic paper (ResNet) and its rasterized scanned-equivalent ground truths; baselines 16/16 vs 12/16 isolate the pure OCR quality loss from layout effects
 
 - `EASYOCR_UNLOAD_JOBDONE` mode: unload OCR models immediately after every call (default off)
 

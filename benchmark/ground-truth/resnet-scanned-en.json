@@ -1,0 +1,85 @@
+{
+  "document": "resnet-scanned-en",
+  "source": {
+    "title": "Deep Residual Learning for Image Recognition — rasterized scanned-equivalent (200dpi image-only PDF)",
+    "url": "https://arxiv.org/pdf/1512.03385",
+    "sha256": "b0f56121f50fc144542e77014e0253319521569191530077268d331a2362bb0b",
+    "notes": "Derived from resnet-multicolumn-en by rasterizing every page at 200dpi into an image-only PDF (pymupdf), simulating a scanned document with zero text layer. Content and expectations identical to the source ground truth; regenerate with the same tool if the source PDF changes. Built 2026-08-17, pending spot-check approval (inherits the source document's verification), then frozen."
+  },
+  "structure": {
+    "headings": [
+      "Deep Residual Learning for Image Recognition",
+      "Abstract",
+      "1. Introduction",
+      "3.3. Network Architectures",
+      "4.1. ImageNet Classification",
+      "4.2. CIFAR-10 and Analysis",
+      "References"
+    ],
+    "min_tables": 10
+  },
+  "key_figures": [
+    {
+      "label": "VGG-16",
+      "values": [
+        "28.07",
+        "9.33"
+      ]
+    },
+    {
+      "label": "PReLU-net",
+      "values": [
+        "24.27",
+        "7.38",
+        "21.59",
+        "5.71"
+      ]
+    },
+    {
+      "label": "ResNet-50",
+      "values": [
+        "22.85",
+        "6.71",
+        "20.74",
+        "5.25"
+      ]
+    },
+    {
+      "label": "ResNet-101",
+      "values": [
+        "21.75",
+        "6.05",
+        "19.87",
+        "4.60"
+      ]
+    },
+    {
+      "label": "ResNet-152",
+      "values": [
+        "21.43",
+        "5.71",
+        "19.38",
+        "4.49"
+      ]
+    },
+    {
+      "label": "ResNet (ILSVRC'15)",
+      "values": [
+        "3.57"
+      ]
+    },
+    {
+      "label": "FitNet",
+      "values": [
+        "8.39"
+      ]
+    },
+    {
+      "label": "Highway",
+      "values": [
+        "7.54",
+        "8.80"
+      ]
+    }
+  ]
+}

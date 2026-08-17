@@ -1,0 +1,31 @@
+{
+  "document": "resnet-multicolumn-en",
+  "source": {
+    "title": "Deep Residual Learning for Image Recognition (arXiv:1512.03385)",
+    "url": "https://arxiv.org/pdf/1512.03385",
+    "sha256": "1e0651b6810ecba34a3dbc5b5b0209226f889004607c1f203540a48d64e5a93a",
+    "notes": "Public arXiv preprint, CVPR two-column layout, 12 pages, many small result tables. Key figures are the paper's published benchmark numbers (Tables 3-6), cross-checked against the widely cited values (e.g. ResNet-152 single-model 19.38/4.49, ensemble test top-5 3.57). Built 2026-08-17, pending spot-check approval, then frozen."
+  },
+  "structure": {
+    "headings": [
+      "Deep Residual Learning for Image Recognition",
+      "Abstract",
+      "1. Introduction",
+      "3.3. Network Architectures",
+      "4.1. ImageNet Classification",
+      "4.2. CIFAR-10 and Analysis",
+      "References"
+    ],
+    "min_tables": 10
+  },
+  "key_figures": [
+    { "label": "VGG-16", "values": ["28.07", "9.33"] },
+    { "label": "PReLU-net", "values": ["24.27", "7.38", "21.59", "5.71"] },
+    { "label": "ResNet-50", "values": ["22.85", "6.71", "20.74", "5.25"] },
+    { "label": "ResNet-101", "values": ["21.75", "6.05", "19.87", "4.60"] },
+    { "label": "ResNet-152", "values": ["21.43", "5.71", "19.38", "4.49"] },
+    { "label": "ResNet (ILSVRC'15)", "values": ["3.57"] },
+    { "label": "FitNet", "values": ["8.39"] },
+    { "label": "Highway", "values": ["7.54", "8.80"] }
+  ]
+}

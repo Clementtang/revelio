@@ -10,6 +10,7 @@
 
 - `benchmark/`：轉換品質回歸測試工具，附 TSMC 2025 Q3 英文合併財報 ground truth（0.6.0 baseline：26/27）
 - `benchmark/`：同份財報中文版（CID 字型）ground truth；force-OCR baseline 12/26，量化視覺 OCR fallback 的品質差距
+- `benchmark/`：雙欄學術論文（ResNet）與其光柵化掃描版 ground truth；baseline 16/16 對 12/16，把純 OCR 品質損耗與版面因素隔離
 
 - `EASYOCR_UNLOAD_JOBDONE` 模式：每次辨識完成後立即卸載模型（預設關閉）
 

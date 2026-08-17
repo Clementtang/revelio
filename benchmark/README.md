@@ -21,11 +21,14 @@ exit code 0 表示全數通過；每項 FAIL 會列出缺的標題、列數不�
 | ----------------------------- | ---------------------------------------- | ----------------------------------------------- | ------------------------- |
 | `tsmc-2025q3-consolidated-en` | 無邊框表格、多欄對齊、大量數字           | `ground-truth/tsmc-2025q3-consolidated-en.json` | 已凍結（2026-08-16 核可） |
 | `tsmc-2025q3-consolidated-zh` | CID 字型（無 ToUnicode）、force-OCR 路徑 | `ground-truth/tsmc-2025q3-consolidated-zh.json` | 待核可（標籤與標題）      |
+| `resnet-multicolumn-en`       | 雙欄學術排版、多個小型結果表             | `ground-truth/resnet-multicolumn-en.json`       | 待核可                    |
+| `resnet-scanned-en`           | 掃描件（零文字層）、force-OCR 路徑       | `ground-truth/resnet-scanned-en.json`           | 待核可（隨 multicolumn）  |
 
-規劃中（依 PRD 分批建置）：TSMC 中文版（CID 字型 + force-OCR 路徑）、多欄學術論文、
-掃描件。
+PRD 規劃的四類文件（財報、CID、多欄論文、掃描件）已到齊。
 
-測試 PDF 不放進 repo（授權與體積考量），ground truth 的 `source.url` 記錄公開下載來源。
+測試 PDF 不放進 repo（授權與體積考量），ground truth 的 `source.url` 與 `sha256` 記錄
+公開下載來源。掃描件由 multicolumn 原檔以 pymupdf 200dpi 光柵化生成（產生方式見其
+`source.notes`），內容相同、文字層歸零，兩份共用同一組期望值。
 
 ## Ground truth 建置準則
 
@@ -52,6 +55,16 @@ exit code 0 表示全數通過；每項 FAIL 會列出缺的標題、列數不�
 
 中英對照（26/27 vs 12/26）即為 CID 字型 + 視覺 OCR fallback 路徑的品質差距量化。
 若引入 VLM OCR fallback（PRD Feature 1 的候選模型），以 12/26 為改善基準。
+
+`resnet-multicolumn-en`：**16/16**（2026-08-17）。雙欄學術排版對 hybrid mode 無壓力。
+
+`resnet-scanned-en`（同內容的 200dpi 純圖片版，force-OCR）：**12/16**（2026-08-17）。
+四個 fail 皆為真實 OCR 缺陷：標題「4.2. CIFAR-10 and Analysis」丟失、兩個表格 cell
+數值漏抓（21.75、4.49）、`3.57` 被讀成 `357`（小數點丟失，「看起來合理但錯」的典型，
+正是 Feature 1 表格驗證層要抓的目標類型）。
+
+multicolumn 與 scanned 內容相同、僅文字層不同，16/16 對 12/16 的差距即為
+「純視覺 OCR 相對原生文字層」的品質損耗，隔離了版面因素。
 
 ## 已知限制
 
