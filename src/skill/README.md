@@ -35,6 +35,7 @@ In Claude Code, type `/revelio` with a file path:
 /revelio ~/Documents/receipt.jpg     # image → EasyOCR
 /revelio ~/reports/financial.pdf     # PDF   → opendataloader-pdf
 /revelio --ocr ~/scanned_page.png    # force EasyOCR
+/revelio --ocr ~/scanned.pdf         # PDF: hybrid --force-ocr (EasyOCR cannot read PDF)
 /revelio --pdf ~/document.pdf        # force opendataloader-pdf
 ```
 
