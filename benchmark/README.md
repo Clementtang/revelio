@@ -20,9 +20,9 @@ exit code 0 表示全數通過；每項 FAIL 會列出缺的標題、列數不�
 | 文件                          | 考驗重點                                 | Ground truth                                    | 狀態                      |
 | ----------------------------- | ---------------------------------------- | ----------------------------------------------- | ------------------------- |
 | `tsmc-2025q3-consolidated-en` | 無邊框表格、多欄對齊、大量數字           | `ground-truth/tsmc-2025q3-consolidated-en.json` | 已凍結（2026-08-16 核可） |
-| `tsmc-2025q3-consolidated-zh` | CID 字型（無 ToUnicode）、force-OCR 路徑 | `ground-truth/tsmc-2025q3-consolidated-zh.json` | 待核可（標籤與標題）      |
-| `resnet-multicolumn-en`       | 雙欄學術排版、多個小型結果表             | `ground-truth/resnet-multicolumn-en.json`       | 待核可                    |
-| `resnet-scanned-en`           | 掃描件（零文字層）、force-OCR 路徑       | `ground-truth/resnet-scanned-en.json`           | 待核可（隨 multicolumn）  |
+| `tsmc-2025q3-consolidated-zh` | CID 字型（無 ToUnicode）、force-OCR 路徑 | `ground-truth/tsmc-2025q3-consolidated-zh.json` | 已凍結（2026-08-20 核可） |
+| `resnet-multicolumn-en`       | 雙欄學術排版、多個小型結果表             | `ground-truth/resnet-multicolumn-en.json`       | 已凍結（2026-08-20 核可） |
+| `resnet-scanned-en`           | 掃描件（零文字層）、force-OCR 路徑       | `ground-truth/resnet-scanned-en.json`           | 已凍結（2026-08-20 核可） |
 
 PRD 規劃的四類文件（財報、CID、多欄論文、掃描件）已到齊。
 

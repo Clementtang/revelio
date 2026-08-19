@@ -4,7 +4,7 @@
     "title": "Deep Residual Learning for Image Recognition — rasterized scanned-equivalent (200dpi image-only PDF)",
     "url": "https://arxiv.org/pdf/1512.03385",
     "sha256": "b0f56121f50fc144542e77014e0253319521569191530077268d331a2362bb0b",
-    "notes": "Derived from resnet-multicolumn-en by rasterizing every page at 200dpi into an image-only PDF (pymupdf), simulating a scanned document with zero text layer. Content and expectations identical to the source ground truth; regenerate with the same tool if the source PDF changes. Built 2026-08-17, pending spot-check approval (inherits the source document's verification), then frozen."
+    "notes": "Derived from resnet-multicolumn-en by rasterizing every page at 200dpi into an image-only PDF (pymupdf), simulating a scanned document with zero text layer. Content and expectations identical to the source ground truth; regenerate with the same tool if the source PDF changes. Built 2026-08-17, pending spot-check approval (inherits the source document's verification), then frozen. FROZEN 2026-08-20 (approved together with resnet-multicolumn-en, whose expectations it shares; any change must be recorded here)."
   },
   "structure": {
     "headings": [
