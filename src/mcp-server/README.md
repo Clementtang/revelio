@@ -43,7 +43,7 @@ Then restart Claude Code.
 
 - `ocr_image_file` — OCR from local file path
 - `ocr_image_base64` — OCR from base64 encoded image
-- `ocr_image_url` — OCR from URL (http/https only, size-capped)
+- `ocr_image_url` — OCR from a public http/https URL (private/loopback hosts and redirects rejected, size-capped)
 - `unload_ocr_models` — release cached models to free memory
 
 ## Configuration
@@ -58,6 +58,7 @@ or in your shell):
 | `EASYOCR_UNLOAD_TIMEOUT` | Seconds idle before models auto-unload (`0` off)   | `300`                    |
 | `EASYOCR_UNLOAD_JOBDONE` | Unload right after every OCR call (`true`/`false`) | `false`                  |
 | `REVELIO_OUTPUT_DIR`     | Output dir for `ocr_to_file.py`                    | `~/revelio/ocr_results/` |
+| `REVELIO_MCP_DIR`        | Skill Path A directory for this server             | `$HOME/revelio/src/mcp-server` |
 
 Default language: `ch_tra,en` (Traditional Chinese + English). EasyOCR supports
 80+ languages — e.g. `EASYOCR_LANGUAGES="ch_tra,en,ja"`.

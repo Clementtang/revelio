@@ -15,43 +15,50 @@ from mcp.server.fastmcp import FastMCP
 
 from ocr_common import (
     MAX_IMAGE_BYTES,
+    assert_public_http_url,
+    decode_base64_image,
     get_default_languages,
     get_gpu_flag,
     get_unload_jobdone,
     get_unload_timeout,
     image_bytes_to_array,
+    read_local_image,
     validate_image_bytes,
 )
 
 # Create an MCP server
 mcp = FastMCP("Revelio")
 
-# Reader cache keyed by sorted language tuple, guarded by a lock because the
-# auto-unload timer fires on a background thread. _in_flight (same lock) counts
-# OCR calls in progress so the timer never unloads a model mid-call — gc.collect()
-# concurrent with an MPS inference is a timing ADR-002 never validated.
+# Reader cache, idle timer, in-flight count, and deferred-unload flag share
+# this lock so a background Timer cannot collect mid-inference.
 _reader_cache = {}
 _reader_lock = threading.Lock()
 _unload_timer: threading.Timer | None = None
 _in_flight = 0
+_unload_when_idle = False
 
 
 def _cancel_unload_timer() -> None:
     global _unload_timer
-    if _unload_timer is not None:
-        _unload_timer.cancel()
+    with _reader_lock:
+        timer = _unload_timer
         _unload_timer = None
+    if timer is not None:
+        timer.cancel()
 
 
 def _schedule_unload() -> None:
     """(Re)arm the idle auto-unload timer if EASYOCR_UNLOAD_TIMEOUT is set."""
     global _unload_timer
-    _cancel_unload_timer()
     timeout = get_unload_timeout()
-    if timeout > 0:
-        _unload_timer = threading.Timer(timeout, _unload_readers)
-        _unload_timer.daemon = True
-        _unload_timer.start()
+    with _reader_lock:
+        if _unload_timer is not None:
+            _unload_timer.cancel()
+            _unload_timer = None
+        if timeout > 0:
+            _unload_timer = threading.Timer(timeout, _unload_readers)
+            _unload_timer.daemon = True
+            _unload_timer.start()
 
 
 def _unload_readers() -> int:
@@ -81,13 +88,16 @@ def _job_start() -> None:
 
 def _job_done() -> None:
     """Mark an OCR call finished (success or failure) and re-arm unloading."""
-    global _in_flight
+    global _in_flight, _unload_when_idle
     with _reader_lock:
         _in_flight = max(0, _in_flight - 1)
         idle = _in_flight == 0
+        pending = _unload_when_idle
+        if idle and pending:
+            _unload_when_idle = False
     if not idle:
         return
-    if get_unload_jobdone():
+    if pending or get_unload_jobdone():
         _unload_readers()
     else:
         _schedule_unload()
@@ -122,10 +132,7 @@ def _run_ocr(
     width_ths: float,
     height_ths: float,
 ) -> list:
-    """Run EasyOCR on an image (path or numpy array) under in-flight protection.
-
-    ``image`` may be a file path (str) or an RGB numpy array; EasyOCR accepts both.
-    """
+    """Run EasyOCR on an RGB numpy array under in-flight protection."""
     _job_start()
     try:
         reader = get_reader(get_default_languages())
@@ -163,17 +170,13 @@ def ocr_image_base64(
         - detail=1: [([[x1,y1], [x2,y2], [x3,y3], [x4,y4]], 'text', confidence), ...]
         - detail=0: ['text1', 'text2', ...]
     """
-    import base64
-
     try:
-        try:
-            image_bytes = base64.b64decode(base64_image, validate=True)
-        except base64.binascii.Error as e:
-            raise ValueError(f"Invalid base64 string: {e}")
-
+        image_bytes = decode_base64_image(base64_image)
         validate_image_bytes(image_bytes)
         image_array = image_bytes_to_array(image_bytes)
         return _run_ocr(image_array, detail, paragraph, width_ths, height_ths)
+    except ValueError:
+        raise
     except Exception as e:
         raise ValueError(f"Error performing OCR: {e}")
 
@@ -190,7 +193,7 @@ def ocr_image_file(
     Performs OCR on an image file using EasyOCR.
 
     Args:
-        image_path: Path to the image file (full path)
+        image_path: Path to the image file (full path; ``~`` is expanded)
         detail: 0 for text only, 1 for full details with coordinates and confidence
         paragraph: Enable paragraph detection
         width_ths: Text width threshold for merging
@@ -201,20 +204,15 @@ def ocr_image_file(
         - detail=1: [([[x1,y1], [x2,y2], [x3,y3], [x4,y4]], 'text', confidence), ...]
         - detail=0: ['text1', 'text2', ...]
     """
-    import os
-
     try:
-        if not os.path.exists(image_path):
-            raise FileNotFoundError(f"The file '{image_path}' was not found.")
-
-        with open(image_path, "rb") as file:
-            image_bytes = file.read()
-
+        image_bytes = read_local_image(image_path)
         validate_image_bytes(image_bytes)
-        # EasyOCR reads the path directly; passing it avoids a redundant decode.
-        return _run_ocr(image_path, detail, paragraph, width_ths, height_ths)
+        image_array = image_bytes_to_array(image_bytes)
+        return _run_ocr(image_array, detail, paragraph, width_ths, height_ths)
     except FileNotFoundError as e:
         raise ValueError(str(e))
+    except ValueError:
+        raise
     except Exception as e:
         raise ValueError(f"Error performing OCR: {e}")
 
@@ -231,7 +229,8 @@ def ocr_image_url(
     Performs OCR on an image from a URL using EasyOCR.
 
     Args:
-        image_url: URL of the image to process (http/https only)
+        image_url: Public http/https URL of the image. Redirects and private
+            or loopback hosts are rejected.
         detail: 0 for text only, 1 for full details with coordinates and confidence
         paragraph: Enable paragraph detection
         width_ths: Text width threshold for merging
@@ -242,14 +241,15 @@ def ocr_image_url(
         - detail=1: [([[x1,y1], [x2,y2], [x3,y3], [x4,y4]], 'text', confidence), ...]
         - detail=0: ['text1', 'text2', ...]
     """
-    from urllib.parse import urlparse
-
     try:
-        if urlparse(image_url).scheme not in ("http", "https"):
-            raise ValueError("Only http and https URLs are supported")
+        assert_public_http_url(image_url)
 
         try:
-            response = requests.get(image_url, timeout=30, stream=True)
+            response = requests.get(
+                image_url, timeout=30, stream=True, allow_redirects=False
+            )
+            if 300 <= response.status_code < 400:
+                raise ValueError("URL redirects are not followed")
             response.raise_for_status()
 
             # Reject oversized payloads up front when the server advertises a size.
@@ -270,6 +270,8 @@ def ocr_image_url(
         validate_image_bytes(image_bytes)
         image_array = image_bytes_to_array(image_bytes)
         return _run_ocr(image_array, detail, paragraph, width_ths, height_ths)
+    except ValueError:
+        raise
     except Exception as e:
         raise ValueError(f"Error performing OCR: {e}")
 
@@ -278,11 +280,18 @@ def ocr_image_url(
 def unload_ocr_models() -> str:
     """Release cached EasyOCR models to free memory (~2.6 GB RAM per language set).
 
-    Models reload automatically on the next OCR request. Useful when the server
-    stays running but OCR is idle. See ADR-002 for the memory-management rationale.
+    Models reload automatically on the next OCR request. If a recognition is
+    in flight, unload is deferred until that call finishes. See ADR-002.
     """
+    global _unload_when_idle
     _cancel_unload_timer()
+    with _reader_lock:
+        in_flight = _in_flight
+        if in_flight > 0:
+            _unload_when_idle = True
     freed = _unload_readers()
+    if freed == 0 and in_flight > 0:
+        return "OCR in progress; models will unload when the current job finishes."
     return f"Unloaded {freed} cached OCR reader(s)."
 
 

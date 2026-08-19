@@ -17,11 +17,13 @@ def clean_state(monkeypatch):
     with server._reader_lock:
         server._reader_cache.clear()
         server._in_flight = 0
+        server._unload_when_idle = False
     server._cancel_unload_timer()
     yield
     with server._reader_lock:
         server._reader_cache.clear()
         server._in_flight = 0
+        server._unload_when_idle = False
     server._cancel_unload_timer()
 
 
@@ -43,6 +45,17 @@ def test_unload_tool_reports_freed_count():
     server._reader_cache[("en",)] = object()
     assert "Unloaded 1" in server.unload_ocr_models()
     assert "Unloaded 0" in server.unload_ocr_models()
+
+
+def test_unload_tool_defers_while_in_flight():
+    server._reader_cache[("en",)] = object()
+    server._in_flight = 1
+    message = server.unload_ocr_models()
+    assert "in progress" in message.lower()
+    assert server._reader_cache
+    server._job_done()
+    assert not server._reader_cache
+    assert server._unload_when_idle is False
 
 
 def test_job_start_disarms_pending_timer(monkeypatch):
