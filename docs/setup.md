@@ -150,7 +150,7 @@ Claude: 讓我幫你辨識這張圖片...
 
 ```bash
 kill $(lsof -t -i :5002) 2>/dev/null
-source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --port 5002 --force-ocr --ocr-lang "ch_tra,en" &
+source ~/odl-env/bin/activate && opendataloader-pdf-hybrid --host 127.0.0.1 --port 5002 --force-ocr --ocr-lang "ch_tra,en" &
 ```
 
 詳見 [ADR-003](decisions/003-pdf-processing-architecture.md)、[ADR-004](decisions/004-pdf-preflight-detection.md) 與 README 的範例輸出。

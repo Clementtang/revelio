@@ -163,6 +163,7 @@ uv run python ocr_to_file.py image.png /custom/path
 | `EASYOCR_UNLOAD_TIMEOUT` | 閒置多少秒後自動卸載模型（`0` 停用）     | `300`                   |
 | `EASYOCR_UNLOAD_JOBDONE` | 每次辨識完成後立即卸載（`true`/`false`） | `false`                 |
 | `REVELIO_OUTPUT_DIR`     | 圖片 OCR 輸出目錄                        | `~/revelio/ocr_results` |
+| `REVELIO_MCP_DIR`        | skill 路徑 A 的 MCP server 目錄          | `$HOME/revelio/src/mcp-server` |
 
 ## Language Support
 

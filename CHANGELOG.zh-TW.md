@@ -18,6 +18,21 @@
 
 - 閒置自動卸載改為預設啟用（`EASYOCR_UNLOAD_TIMEOUT` 預設值由 0/停用 改為 300 秒）；格式錯誤的值改為退回預設值，不再靜默停用
 - 新增 in-flight 保護：辨識進行中不會卸載模型（先前殘留的閒置計時器可能在長任務中途觸發）
+- `/revelio --ocr` 加 `.pdf` 改走 hybrid `--force-ocr`，不再把 PDF 丟給 EasyOCR
+- hybrid server 綁定 `127.0.0.1`；skill 只在執行中的 process 旗標與需要的模式一致時才沿用
+- 前置偵測把 `has_encoding_issues` 視為 force-OCR；PDF 路徑改由 `sys.argv` 傳入，不再插進 `python3 -c` 字串
+- 影像解碼會套用 EXIF 方向，並把透明通道合成到白底再做 OCR
+- benchmark 的關鍵數字改為完整 token 比對，不再用子字串
+- `ocr_image_url` 拒絕私有／回環／link-local 位址與 HTTP 重新導向
+- 空的 `EASYOCR_LANGUAGES` 退回 `ch_tra,en`
+- 辨識進行中呼叫 `unload_ocr_models` 會在該次工作結束後卸載
+- skill 路徑 A 以 `REVELIO_MCP_DIR` 找 MCP server 目錄（預設 `$HOME/revelio/src/mcp-server`）
+
+### 修正
+
+- 加引號的 `~/...` 圖片路徑與 `REVELIO_OUTPUT_DIR` 會展開，不再把字面 `~` 當成目錄名
+- 本地讀圖套用與 URL 相同的 25 MB 上限
+- base64 工具接受折行內容與 `data:*;base64,` data URL
 
 ## [0.6.0] - 2026-08
 

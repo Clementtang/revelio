@@ -18,6 +18,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Idle auto-unload is now on by default (`EASYOCR_UNLOAD_TIMEOUT` defaults to 300s instead of 0/disabled); malformed values fall back to the default instead of silently disabling
 - In-flight guard: models are never unloaded while a recognition is running (a stale idle timer could previously fire mid-call)
+- `/revelio --ocr` on a `.pdf` now routes through hybrid `--force-ocr` instead of EasyOCR (which cannot read PDFs)
+- Hybrid server is bound to `127.0.0.1`; skill reuses a running server only when its `--force-ocr` flag matches the needed mode
+- Skill pre-flight treats `has_encoding_issues` as force-OCR and passes PDF paths via `sys.argv` (no string interpolation into `python3 -c`)
+- Image decode applies EXIF orientation and composites alpha onto white before OCR
+- Benchmark key-figure checks match full numeric tokens, not substrings
+- `ocr_image_url` rejects private/loopback/link-local hosts and HTTP redirects
+- Empty `EASYOCR_LANGUAGES` falls back to `ch_tra,en`
+- `unload_ocr_models` during an in-flight job now unloads when that job finishes
+- Skill Path A resolves the MCP server dir from `REVELIO_MCP_DIR` (default `$HOME/revelio/src/mcp-server`)
+
+### Fixed
+
+- Quoted `~/...` image paths and `REVELIO_OUTPUT_DIR` are expanded instead of treated as a literal `~` directory
+- Local image reads share the 25 MB size cap used for URL fetches
+- Base64 tool accepts wrapped payloads and `data:*;base64,` data URLs
 
 ## [0.6.0] - 2026-08
 

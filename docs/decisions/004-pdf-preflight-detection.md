@@ -32,7 +32,8 @@ ADR-003 建立了 PDF 雙引擎架構後，剩下一個未自動化的判斷：*
 
 | 偵測結果                                              | 啟動旗標                             |
 | ----------------------------------------------------- | ------------------------------------ |
-| `pages_needing_ocr` 為空                              | 標準模式                             |
+| `pages_needing_ocr` 為空，且 `has_encoding_issues` 不為 true | 標準模式                             |
+| `has_encoding_issues` 為 true                         | `--force-ocr --ocr-lang "ch_tra,en"` |
 | 原因含 `suspected_garbled_text` / `vector_text`       | `--force-ocr --ocr-lang "ch_tra,en"` |
 | `pdf_type` 為 `scanned`/`image_based`，或 `scanned`/`no_text` | `--force-ocr --ocr-lang "ch_tra,en"` |
 
