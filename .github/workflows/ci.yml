@@ -33,3 +33,7 @@ jobs:
 
       - name: Test
         run: pytest -q
+
+      - name: Test benchmark matcher
+        working-directory: benchmark
+        run: pytest -q
