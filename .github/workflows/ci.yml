@@ -37,3 +37,7 @@ jobs:
       - name: Test benchmark matcher
         working-directory: benchmark
         run: pytest -q
+
+      - name: Test table-verify helpers
+        working-directory: src/table-verify
+        run: pytest -q

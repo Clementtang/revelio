@@ -9,7 +9,9 @@ For PDFs, the skill first runs a millisecond pre-flight check with
 [pdf-inspector](https://github.com/firecrawl/pdf-inspector) to detect scanned
 pages and undecodable text layers, and picks the right OCR mode before the
 conversion server starts (see
-[ADR-004](../../docs/decisions/004-pdf-preflight-detection.md)).
+[ADR-004](../../docs/decisions/004-pdf-preflight-detection.md)). After
+conversion, it can optionally run a local table-number check with surya v2
+(`src/table-verify/verify_tables.py`).
 
 ## Files
 

@@ -64,9 +64,9 @@ opendataloader-pdf 輸出後，自動比對關鍵數字，把「人工抽查」�
 ### 待決問題
 
 - [x] 比對粒度【已裁決 2026-08-15】完整結構比對（關鍵數字加表格列數、標題層級）。ground truth 建置工作量較大，採分批建置：先建 TSMC 英文財報一份跑通流程，再逐份擴充
-- [ ] ground truth 誰建？【推測】首批由 Claude 逐 cell 建、Clement 抽查核可，之後凍結
-- [ ] TSMC 財報 PDF 放進 repo 的授權問題（公開 filing 應可，但需確認）；或只放下載連結與 checksum？
-- [ ] benchmark 分數要不要進 CI？（CI 目前只跑輕量單元測試，benchmark 需要完整 OCR stack；【推測】先手動腳本即可）
+- [x] ground truth 誰建？首批由 Claude 建、Clement 抽查核可後凍結（四份均於 2026-08-20 前凍結）
+- [x] TSMC 財報 PDF 不進 repo：公開下載 URL + sha256 寫在 ground truth，本機副本在 `benchmark/fixtures/`（gitignore）。`run_suite.py` 以 sha256 閘門驗收
+- [x] benchmark 分數不進 CI 的完整 OCR 路徑；CI 只跑 matcher / suite helper。本機 `run_suite.py` 對凍結 baseline 打分
 
 ## Feature 4：MCP server 記憶體管理補強
 
