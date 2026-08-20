@@ -6,12 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-08
+
 ### Added
 
-- `benchmark/`: regression benchmark runner with ground truth for the TSMC 2025 Q3 English consolidated statements (0.6.0 baseline: 26/27)
-- `benchmark/`: Chinese (CID-font) ground truth for the same filing; force-OCR baseline 12/26 quantifies the visual-OCR fallback quality gap
-- `benchmark/`: two-column academic paper (ResNet) and its rasterized scanned-equivalent ground truths; baselines 16/16 vs 12/16 isolate the pure OCR quality loss from layout effects
-
+- `benchmark/`: regression suite with frozen ground truth for TSMC 2025 Q3 EN (26/27), TSMC ZH CID-font (12/26), ResNet multicolumn (16/16), and its scanned equivalent (12/16)
+- `benchmark/run_suite.py`: sha256-gates gitignored fixture PDFs and fails on score regressions against those baselines
+- Optional table-number verification (`src/table-verify/verify_tables.py`, skill step B-3): surya v2 re-reads table regions locally and flags disagreements; nothing is auto-corrected
 - `EASYOCR_UNLOAD_JOBDONE` mode: unload OCR models immediately after every call (default off)
 
 ### Changed
@@ -160,6 +161,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 | Version | Date       | Highlights                        |
 | ------- | ---------- | --------------------------------- |
+| 0.6.1   | 2026-08    | Benchmark suite, table verification, OCR hardening |
 | 0.6.0   | 2026-08    | Pre-flight PDF detection (pdf-inspector) |
 | 0.5.0   | 2026-04    | PDF support, /revelio rebrand, memory mgmt |
 | 0.4.1   | 2026-02-02 | Bug fixes & error handling        |

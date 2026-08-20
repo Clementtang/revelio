@@ -27,6 +27,7 @@ A privacy-first local document processing toolkit for [Claude Code](https://clau
 - **Pre-flight PDF Detection** — [pdf-inspector](https://github.com/firecrawl/pdf-inspector) analyzes the PDF structure in milliseconds before conversion, detecting scanned pages and undecodable text layers (e.g. CID fonts without ToUnicode CMap) so the right OCR mode is chosen up front — no trial-and-error restarts
 - **Manual Override** — Use `--ocr` or `--pdf` to force a specific tool. `--ocr` on a `.pdf` uses hybrid `--force-ocr` (EasyOCR cannot read PDFs)
 - **User Control** — In Skill mode, you decide if Claude can read the results
+- **Optional table verification** — After a PDF conversion, surya v2 re-reads table regions locally and flags disagreeing numbers. Nothing is auto-corrected.
 - **Multi-language** — Traditional Chinese + English by default; both tools support 80+ languages
 
 ## Example Output
@@ -202,11 +203,9 @@ The two tools are complementary, not competing:
 revelio/
 ├── src/
 │   ├── mcp-server/      # EasyOCR MCP server
-│   │   ├── server.py
-│   │   ├── ocr_to_file.py
-│   │   └── pyproject.toml
-│   └── skill/           # /revelio skill (routes to OCR or PDF tool)
-│       └── SKILL.md
+│   ├── skill/           # /revelio skill (routes to OCR or PDF tool)
+│   └── table-verify/    # optional table-number check (surya v2)
+├── benchmark/           # regression suite (PDF fixtures gitignored)
 ├── ocr_results/         # EasyOCR output (git-ignored)
 └── docs/                # Documentation (architecture, ADRs)
 ```
@@ -230,7 +229,7 @@ revelio/
 
 ## History
 
-- **2026-08** — Added pre-flight PDF detection via [pdf-inspector](https://github.com/firecrawl/pdf-inspector): the skill now decides the force-OCR mode from a millisecond structural analysis instead of filename guessing and trial-and-error restarts. See [ADR-004](docs/decisions/004-pdf-preflight-detection.md).
+- **2026-08** — 0.6.1: regression benchmark, optional surya table verification, and OCR helper hardening. 0.6.0 added pre-flight PDF detection via [pdf-inspector](https://github.com/firecrawl/pdf-inspector). See [ADR-004](docs/decisions/004-pdf-preflight-detection.md).
 - **2026-04** — Merged PDF processing via opendataloader-pdf; renamed skill from `/ocr-local` to `/revelio` and MCP server from `easyocr` to `revelio`
 - **2026-02** — Attempted upstream contribution to [WindoC/easyocr-mcp](https://github.com/WindoC/easyocr-mcp) (stalled). The [Clementtang/easyocr-mcp fork](https://github.com/Clementtang/easyocr-mcp) is now archived; Revelio maintains its own MCP server implementation. See [ADR-002](docs/decisions/002-memory-management-strategy.md) for context.
 

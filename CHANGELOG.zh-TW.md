@@ -6,12 +6,13 @@
 
 ## [未發布]
 
+## [0.6.1] - 2026-08
+
 ### 新增
 
-- `benchmark/`：轉換品質回歸測試工具，附 TSMC 2025 Q3 英文合併財報 ground truth（0.6.0 baseline：26/27）
-- `benchmark/`：同份財報中文版（CID 字型）ground truth；force-OCR baseline 12/26，量化視覺 OCR fallback 的品質差距
-- `benchmark/`：雙欄學術論文（ResNet）與其光柵化掃描版 ground truth；baseline 16/16 對 12/16，把純 OCR 品質損耗與版面因素隔離
-
+- `benchmark/`：回歸套件，凍結 TSMC 2025 Q3 英文（26/27）、中文 CID 字型（12/26）、ResNet 雙欄（16/16）與其掃描等價版（12/16）ground truth
+- `benchmark/run_suite.py`：以 sha256 核對 gitignored fixture PDF，分數低於凍結 baseline 視為回歸
+- 選配表格數字驗證（`src/table-verify/verify_tables.py`，skill 步驟 B-3）：surya v2 在本機重讀表格區域並標記不一致，不自動修改
 - `EASYOCR_UNLOAD_JOBDONE` 模式：每次辨識完成後立即卸載模型（預設關閉）
 
 ### 變更
@@ -160,6 +161,7 @@
 
 | 版本  | 日期       | 重點                              |
 | ----- | ---------- | --------------------------------- |
+| 0.6.1 | 2026-08    | 回歸套件、表格驗證、OCR 硬化          |
 | 0.6.0 | 2026-08    | PDF 前置偵測（pdf-inspector）       |
 | 0.5.0 | 2026-04    | PDF 支援、/revelio 改名、記憶體管理 |
 | 0.4.1 | 2026-02-02 | 錯誤修復與錯誤處理                |
