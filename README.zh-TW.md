@@ -25,7 +25,7 @@
   - 圖片（`.jpg`, `.png`, `.bmp`, `.tiff` 等）→ **EasyOCR**
   - PDF（`.pdf`）→ **opendataloader-pdf**（保留表格、標題、閱讀順序）
 - **PDF 前置偵測** — 轉換前由 [pdf-inspector](https://github.com/firecrawl/pdf-inspector) 以毫秒級分析 PDF 結構，偵測掃描件與不可解碼的文字層（如 CID 字型缺 ToUnicode CMap），事先選對 OCR 模式，不再試錯重啟
-- **手動指定** — 使用 `--ocr` 或 `--pdf` 強制指定工具
+- **手動指定** — 使用 `--ocr` 或 `--pdf` 強制指定工具。對 `.pdf` 使用 `--ocr` 時走 hybrid `--force-ocr`（EasyOCR 不能讀 PDF）
 - **使用者掌控** — Skill 模式下，由你決定是否讓 Claude 讀取結果
 - **多語言支援** — 預設繁體中文 + 英文，兩個工具都支援 80+ 種語言
 
@@ -135,7 +135,7 @@
 ```
 你：/revelio ~/Documents/receipt.jpg
 Claude：[自動選擇 EasyOCR] 正在執行本地 OCR...
-        結果已存至 ~/revelio/ocr_results/receipt_<時間戳>.txt
+        結果已存至 ~/revelio/ocr_results/ocr_receipt_<時間戳>.txt
         是否要讓我讀取內容？
 
 你：/revelio ~/reports/財務報告.pdf

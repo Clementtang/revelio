@@ -39,6 +39,18 @@ def normalize(text: str) -> str:
     return re.sub(r"\((\d+)\)", r"-\1", text)
 
 
+def value_in_row(value: str, row: str) -> bool:
+    """True when the normalized value is a full numeric token in the row.
+
+    Substring matching would let ``51`` pass inside ``451755362``.
+    """
+    needle = normalize(value)
+    if not needle:
+        return False
+    haystack = normalize(row)
+    return re.search(rf"(^|[^0-9.]){re.escape(needle)}([^0-9.]|$)", haystack) is not None
+
+
 def parse_tables(markdown: str) -> list[list[str]]:
     """Extract pipe tables as lists of row strings (separator rows excluded)."""
     tables = []
@@ -112,7 +124,7 @@ def run(ground_truth_path: str, converted_path: str) -> int:
         missing = [
             value
             for value in figure["values"]
-            if not any(normalize(value) in normalize(row) for row in matches)
+            if not any(value_in_row(value, row) for row in matches)
         ]
         if missing:
             failures.append(f"key figure {figure['label']!r}: values not in row: {missing}")

@@ -4,12 +4,19 @@ Local OCR script - saves results to file, returns only file path.
 No sensitive data sent to cloud.
 """
 
-import sys
 import os
+import sys
 from datetime import datetime
 from pathlib import Path
 
-from ocr_common import get_default_languages, get_gpu_flag
+from ocr_common import (
+    expand_user_path,
+    get_default_languages,
+    get_gpu_flag,
+    image_bytes_to_array,
+    read_local_image,
+    validate_image_bytes,
+)
 
 
 def main():
@@ -17,28 +24,31 @@ def main():
         print("Usage: ocr_to_file.py <image_path> [output_dir]", file=sys.stderr)
         sys.exit(1)
 
-    image_path = sys.argv[1]
-
-    # Validate image file exists
-    if not Path(image_path).exists():
+    image_path = expand_user_path(sys.argv[1])
+    try:
+        image_bytes = read_local_image(image_path)
+        validate_image_bytes(image_bytes)
+        image_array = image_bytes_to_array(image_bytes)
+    except FileNotFoundError:
         print(f"錯誤: 找不到檔案 {image_path}", file=sys.stderr)
         sys.exit(1)
+    except ValueError as exc:
+        print(f"錯誤: {exc}", file=sys.stderr)
+        sys.exit(1)
 
-    # Output directory priority: CLI arg > env var > default
-    default_output_dir = os.path.expanduser("~/revelio/ocr_results")
-    output_dir = (
-        sys.argv[2] if len(sys.argv) > 2
-        else os.environ.get("REVELIO_OUTPUT_DIR", default_output_dir)
-    )
+    if len(sys.argv) > 2:
+        output_dir = expand_user_path(sys.argv[2])
+    else:
+        output_dir = expand_user_path(
+            os.environ.get("REVELIO_OUTPUT_DIR", "~/revelio/ocr_results")
+        )
 
-    # Ensure output directory exists
     try:
         Path(output_dir).mkdir(parents=True, exist_ok=True)
     except OSError as e:
         print(f"錯誤: 無法建立輸出目錄 {output_dir}: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Import EasyOCR (lazy load to show progress)
     print("載入 EasyOCR...", file=sys.stderr)
     try:
         import easyocr
@@ -46,7 +56,6 @@ def main():
         print(f"錯誤: 無法載入 EasyOCR: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Initialize reader (GPU controlled by EASYOCR_GPU, shared with the MCP server)
     languages = get_default_languages()
     try:
         reader = easyocr.Reader(languages, gpu=get_gpu_flag(), verbose=False)
@@ -54,21 +63,18 @@ def main():
         print(f"錯誤: 無法初始化 OCR 引擎: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Perform OCR
     print(f"辨識中: {image_path}", file=sys.stderr)
     try:
-        results = reader.readtext(image_path)
+        results = reader.readtext(image_array)
     except Exception as e:
         print(f"錯誤: OCR 辨識失敗: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Prepare output
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     image_name = Path(image_path).stem
     output_filename = f"ocr_{image_name}_{timestamp}.txt"
     output_path = Path(output_dir) / output_filename
 
-    # Write results to file
     try:
         with open(output_path, "w", encoding="utf-8") as f:
             f.write("# OCR 結果\n")
@@ -87,7 +93,6 @@ def main():
         print(f"錯誤: 無法寫入檔案 {output_path}: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Only output the file path (this is what gets sent to Claude)
     print(f"OCR 完成，結果已儲存至: {output_path}")
 
 

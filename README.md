@@ -25,7 +25,7 @@ A privacy-first local document processing toolkit for [Claude Code](https://clau
   - Images (`.jpg`, `.png`, `.bmp`, `.tiff`, ...) → **EasyOCR**
   - PDFs (`.pdf`) → **opendataloader-pdf** (preserves tables, headings, reading order)
 - **Pre-flight PDF Detection** — [pdf-inspector](https://github.com/firecrawl/pdf-inspector) analyzes the PDF structure in milliseconds before conversion, detecting scanned pages and undecodable text layers (e.g. CID fonts without ToUnicode CMap) so the right OCR mode is chosen up front — no trial-and-error restarts
-- **Manual Override** — Use `--ocr` or `--pdf` to force a specific tool
+- **Manual Override** — Use `--ocr` or `--pdf` to force a specific tool. `--ocr` on a `.pdf` uses hybrid `--force-ocr` (EasyOCR cannot read PDFs)
 - **User Control** — In Skill mode, you decide if Claude can read the results
 - **Multi-language** — Traditional Chinese + English by default; both tools support 80+ languages
 
@@ -135,7 +135,7 @@ Start in Claude Code and let the skill auto-detect:
 ```
 You: /revelio ~/Documents/receipt.jpg
 Claude: [auto-selects EasyOCR] Running local OCR...
-        Results saved to ~/revelio/ocr_results/receipt_<timestamp>.txt
+        Results saved to ~/revelio/ocr_results/ocr_receipt_<timestamp>.txt
         Would you like me to read the content?
 
 You: /revelio ~/reports/financial_report.pdf
