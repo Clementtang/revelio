@@ -80,12 +80,12 @@ print(json.dumps({
 
 依偵測結果決定 server 啟動旗標：
 
-| 偵測結果                                                        | 判斷                                     | 啟動旗標                          |
-| --------------------------------------------------------------- | ---------------------------------------- | --------------------------------- |
-| `pages_needing_ocr` 為空，且 `has_encoding_issues` 不為 true    | 文字層可用                               | 標準模式（不加 `--force-ocr`）    |
-| `has_encoding_issues` 為 true                                   | 字型編碼損壞，文字層可能是亂碼           | `--force-ocr --ocr-lang "ch_tra,en"` |
-| 原因含 `suspected_garbled_text` 或 `vector_text`                | 文字層不可解碼（如 CID 字型缺 ToUnicode）| `--force-ocr --ocr-lang "ch_tra,en"` |
-| `pdf_type` 為 `scanned`/`image_based`，或原因含 `scanned`/`no_text` | 掃描件／純圖片                           | `--force-ocr --ocr-lang "ch_tra,en"` |
+| 偵測結果                                                            | 判斷                                      | 啟動旗標                             |
+| ------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------ |
+| `pages_needing_ocr` 為空，且 `has_encoding_issues` 不為 true        | 文字層可用                                | 標準模式（不加 `--force-ocr`）       |
+| `has_encoding_issues` 為 true                                       | 字型編碼損壞，文字層可能是亂碼            | `--force-ocr --ocr-lang "ch_tra,en"` |
+| 原因含 `suspected_garbled_text` 或 `vector_text`                    | 文字層不可解碼（如 CID 字型缺 ToUnicode） | `--force-ocr --ocr-lang "ch_tra,en"` |
+| `pdf_type` 為 `scanned`/`image_based`，或原因含 `scanned`/`no_text` | 掃描件／純圖片                            | `--force-ocr --ocr-lang "ch_tra,en"` |
 
 > `ocr_lang` 依文件語言調整：純英文文件用 `"en"` 即可，中文或中英混合用 `"ch_tra,en"`。
 >
@@ -152,8 +152,25 @@ opendataloader_pdf.convert(
 
 - **必須使用 hybrid mode** — 基本模式無法正確處理無邊框表格（如財務報表）
 - 掃描件與亂碼文字層由步驟 B-0 前置偵測，以 `--force-ocr --ocr-lang` 旗標在 server 啟動時決定
-- 轉換後建議人工抽查表格數字正確性
 - 處理完畢後可用 `kill %1` 或 `kill $(lsof -t -iTCP:5002 -sTCP:LISTEN)` 關閉 hybrid server
+
+**步驟 B-3：表格數字驗證（選配，預設詢問）**
+
+轉換完成後，若輸出含表格且文件屬於數字敏感場景（財報、報價、統計），詢問使用者是否執行表格驗證：
+
+> 轉換完成。要不要跑表格數字驗證？（surya v2 本地模型獨立重讀 PDF 表格區域，
+> 交叉比對轉換輸出的數字並標記不一致，約每頁 15 至 30 秒，全程本地）
+
+使用者同意後執行（需要 `~/surya-env`，安裝方式見 `docs/research/surya-v2-local-test.md`）：
+
+```bash
+VERIFY_DIR="${REVELIO_MCP_DIR:-$HOME/revelio/src/mcp-server}/../table-verify"
+source ~/surya-env/bin/activate && SURYA_GUIDED_LAYOUT=false \
+  python3 "$VERIFY_DIR/verify_tables.py" "$pdf_path" "$converted_md" \
+  -o "$converted_md.verify.md"
+```
+
+驗證報告只標記可疑數字（含「疑似小數點丟失」線索與信心分數），不會修改轉換輸出。報告本身不含文件全文，但含個別數字與所在列節錄，回報給使用者時同樣遵守步驟 4 的隱私規則：告知報告路徑與可疑筆數即可，內容待使用者同意才讀取。使用者婉拒驗證時，提醒重要數字建議人工抽查。
 
 ### 步驟 4：回報結果並詢問是否讀取（關鍵隱私步驟）
 
