@@ -56,6 +56,11 @@ PRD 規劃的四類文件（財報、CID、多欄論文、掃描件）已到齊�
 中英對照（26/27 vs 12/26）即為 CID 字型 + 視覺 OCR fallback 路徑的品質差距量化。
 若引入 VLM OCR fallback（PRD Feature 1 的候選模型），以 12/26 為改善基準。
 
+2026-08-20 補記：IR 網站重新下載的中文版（sha256 見 ground truth，報表頁為零文字層
+整頁掃描，與四月 CID 字型版不同檔）以同設定重測仍為 **12/26**，失敗樣態相同（資產
+負債表被切碎成 91 個表格片段、部分標籤 OCR 字元錯誤）。force-OCR 路徑的 baseline
+對兩種來源檔一致，改善基準維持 12/26。
+
 `resnet-multicolumn-en`：**16/16**（2026-08-17）。雙欄學術排版對 hybrid mode 無壓力。
 
 `resnet-scanned-en`（同內容的 200dpi 純圖片版，force-OCR）：**12/16**（2026-08-17）。
