@@ -73,8 +73,10 @@ print(json.dumps({
     "confidence": r.confidence,
     "has_encoding_issues": getattr(r, "has_encoding_issues", False),
 }, ensure_ascii=False))
-' -- "$pdf_path"
+' "$pdf_path"
 ```
+
+（注意：`python3 -c` 之後不要加 `--`，它會被收進 `sys.argv[1]` 造成參數位移，實測驗證於 2026-08-20。）
 
 依偵測結果決定 server 啟動旗標：
 
@@ -139,7 +141,7 @@ opendataloader_pdf.convert(
     hybrid_mode="full",
     hybrid_url="http://127.0.0.1:5002",
 )
-' -- "$pdf_path" "$output_dir"
+' "$pdf_path" "$output_dir"
 ```
 
 輸出資料夾命名慣例：`~/odl-output/<公司名-代號>/<期間-類型>/`
