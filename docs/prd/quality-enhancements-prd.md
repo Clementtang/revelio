@@ -29,10 +29,19 @@ opendataloader-pdf 輸出後，自動比對關鍵數字，把「人工抽查」�
 ### 待決問題
 
 - [x] 驗證用的 vision 模型跑在哪？【已裁決 2026-08-15】採本地 VLM，維持 privacy-first 與 consent gate 精神。候選模型見 `docs/research/watchlist/vlm-ocr-fallback.md`（優先實測 surya v2 GGUF，次選 deepseek-ocr.rs 量化版、Qwen2-VL-OCR-2B）
-- [ ] 本地 VLM 的選型：候選比較見 watchlist 報告，需實機測試後定案
-- [ ] 驗證範圍：全表逐 cell，或只抽驗數字欄位？成本差很多
-- [ ] 不一致時的呈現方式：只標記，或嘗試自動修正？（研究警告：LLM 修數字有「看起來合理但錯」的風險，【推測】只標記不修正比較安全）
-- [ ] 驗收標準怎麼定？（例如：TSMC 財報 benchmark 上 false negative 為零）
+- [x] 本地 VLM 的選型【已裁決 2026-08-18，依實測】surya v2（0.65B GGUF，llama.cpp Metal）。實測記錄見 `docs/research/surya-v2-local-test.md`：中英文表格數值全對、記憶體 2.9GB 與 EasyOCR 同量級；弱點在裝飾性大字距標題，與數字驗證無關
+- [x] 驗證範圍【已裁決 2026-08-20】只驗數字欄位，不逐 cell 驗文字。依據：surya 數值辨識極強但中文標籤偶有誤讀與幻覺，驗文字會產生假警報；財報場景的真實風險是數字錯
+- [x] 不一致時的呈現方式【已裁決 2026-08-15 隨 Feature 1 定位確認】只標記不修正
+- [x] 驗收標準【已裁決 2026-08-20】在四份凍結 benchmark 上，對「轉換輸出與 ground truth 不符的數字」漏報為零（baseline 已知數字錯誤如掃描版 357 必須全數被標記）；誤報率不設硬門檻先觀察，驗證報告附信心分數供人工複核排序
+
+### 流程設計（依 2026-08-20 裁決展開）
+
+1. 輸入：源 PDF、轉換輸出 markdown、報告輸出路徑。定位維持選配，由 skill 在轉換完成後詢問是否執行
+2. 抽取：解析 markdown 表格，取出全部數字 cell（正規化：千分位逗號、貨幣符號、百分號、括號負數、CJK 字間空格）
+3. 獨立辨識：pymupdf 200dpi 渲染各頁，surya LayoutPredictor 找表格 bbox（需 `SURYA_GUIDED_LAYOUT=false`），裁切後 RecognitionPredictor 輸出 HTML 表格，抽出數字
+4. 比對：逐頁把 markdown 數字集合與 surya 數字集合對照，markdown 有而 surya 讀不到（或讀出不同值）的數字列為可疑
+5. 輸出：驗證報告（頁碼、可疑數字、surya 讀到的值、信心分數），附在轉換結果旁；不改動轉換輸出本身
+6. 效能預算：單頁 15 至 30 秒（版面偵測 13 秒加逐表辨識數秒），只在使用者同意時付出
 
 ## Feature 2：CID 偵測自動化（已由 ADR-004 實現，移出範圍）
 
