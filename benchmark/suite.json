@@ -1,0 +1,38 @@
+{
+  "documents": [
+    {
+      "id": "tsmc-2025q3-consolidated-en",
+      "fixture": "tsmc-2025q3-consolidated-en.pdf",
+      "ground_truth": "ground-truth/tsmc-2025q3-consolidated-en.json",
+      "mode": "standard",
+      "baseline_passed": 26,
+      "baseline_checks": 27
+    },
+    {
+      "id": "tsmc-2025q3-consolidated-zh",
+      "fixture": "tsmc-2025q3-consolidated-zh.pdf",
+      "ground_truth": "ground-truth/tsmc-2025q3-consolidated-zh.json",
+      "mode": "force-ocr",
+      "ocr_lang": "ch_tra,en",
+      "baseline_passed": 12,
+      "baseline_checks": 26
+    },
+    {
+      "id": "resnet-multicolumn-en",
+      "fixture": "resnet-1512.03385.pdf",
+      "ground_truth": "ground-truth/resnet-multicolumn-en.json",
+      "mode": "standard",
+      "baseline_passed": 16,
+      "baseline_checks": 16
+    },
+    {
+      "id": "resnet-scanned-en",
+      "fixture": "resnet-1512.03385-scanned.pdf",
+      "ground_truth": "ground-truth/resnet-scanned-en.json",
+      "mode": "force-ocr",
+      "ocr_lang": "en",
+      "baseline_passed": 12,
+      "baseline_checks": 16
+    }
+  ]
+}
