@@ -1,0 +1,16 @@
+{
+  "document": "simple-table",
+  "source": {
+    "title": "Synthetic table for suite plumbing tests",
+    "url": "",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "notes": "Not a real filing. Used by benchmark/test_suite.py only."
+  },
+  "structure": {
+    "headings": ["Income statement"],
+    "tables": [{ "name": "income", "min_rows": 2, "columns": 3 }]
+  },
+  "key_figures": [
+    { "label": "NET REVENUE", "values": ["1000"] }
+  ]
+}

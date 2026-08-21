@@ -9,11 +9,25 @@
 
 ## 執行方式
 
+單份文件：
+
 ```bash
 python3 run_benchmark.py ground-truth/<document>.json <converted-output>.md
 ```
 
 exit code 0 表示全數通過；每項 FAIL 會列出缺的標題、列數不足或數字不符的位置。
+
+整套 fixture 驗收（sha256 閘門 + 與凍結 baseline 比分數；轉換後的 markdown 需另備）：
+
+```bash
+# 測試 PDF 放在 benchmark/fixtures/（gitignored；sha256 寫在各 ground-truth 的 source.sha256）
+python3 run_suite.py --converted-dir /path/to/converted-markdown
+
+# 若 hybrid server 已在正確模式運行，可當場轉換缺的輸出：
+python3 run_suite.py --convert --converted-dir benchmark/output
+```
+
+分數低於凍結 baseline 視為回歸（exit 1）。多過幾項是允許的。fixture 或轉換輸出缺失時該份文件 SKIP；四份都沒評到則 exit 2。
 
 ## 文件集
 

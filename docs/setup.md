@@ -77,6 +77,8 @@ pip install -U "opendataloader-pdf[hybrid]" pdf-inspector
 
 [pdf-inspector](https://github.com/firecrawl/pdf-inspector) 用於轉換前的前置偵測：毫秒級判斷 PDF 是否為掃描件、文字層是否可解碼（如 CID 字型缺 ToUnicode CMap），讓 skill 在啟動 hybrid server 前就決定要不要加 `--force-ocr`，省去試錯重啟的 30–40 秒成本。詳見 [ADR-004](decisions/004-pdf-preflight-detection.md)。
 
+選配表格驗證（skill 步驟 B-3）需要另裝 `~/surya-env`，安裝方式見 [surya v2 實測](research/surya-v2-local-test.md)。
+
 ### 6. 驗證安裝
 
 ```bash

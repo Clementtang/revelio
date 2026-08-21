@@ -31,6 +31,7 @@ Exit code 0 when everything passes, 1 otherwise. Stdlib only.
 import json
 import re
 import sys
+from dataclasses import dataclass, field
 
 
 def normalize(text: str) -> str:
@@ -73,7 +74,15 @@ def column_count(row: str) -> int:
     return len(row.strip("|").split("|"))
 
 
-def run(ground_truth_path: str, converted_path: str) -> int:
+@dataclass
+class BenchmarkResult:
+    document: str
+    passed: int
+    checks: int
+    failures: list[str] = field(default_factory=list)
+
+
+def evaluate(ground_truth_path: str, converted_path: str) -> BenchmarkResult:
     with open(ground_truth_path, encoding="utf-8") as f:
         truth = json.load(f)
     with open(converted_path, encoding="utf-8") as f:
@@ -130,10 +139,20 @@ def run(ground_truth_path: str, converted_path: str) -> int:
             failures.append(f"key figure {figure['label']!r}: values not in row: {missing}")
 
     passed = checks - len(failures)
-    print(f"{truth['document']}: {passed}/{checks} checks passed")
-    for failure in failures:
+    return BenchmarkResult(
+        document=truth["document"],
+        passed=passed,
+        checks=checks,
+        failures=failures,
+    )
+
+
+def run(ground_truth_path: str, converted_path: str) -> int:
+    result = evaluate(ground_truth_path, converted_path)
+    print(f"{result.document}: {result.passed}/{result.checks} checks passed")
+    for failure in result.failures:
         print(f"  FAIL {failure}")
-    return 0 if not failures else 1
+    return 0 if not result.failures else 1
 
 
 if __name__ == "__main__":

@@ -128,8 +128,11 @@ revelio/
 │   │   ├── ocr_to_file.py    # 獨立 OCR 腳本
 │   │   ├── ocr_common.py     # 共用 helper（語言/GPU/影像）
 │   │   └── pyproject.toml    # Python 依賴定義
-│   └── skill/
-│       └── SKILL.md          # Skill 定義
+│   ├── skill/
+│   │   └── SKILL.md          # Skill 定義
+│   └── table-verify/
+│       └── verify_tables.py  # 表格數字驗證（surya v2，選配）
+├── benchmark/                # 回歸套件（ground truth + run_suite.py）
 ├── ocr_results/              # 圖片 OCR 輸出（預設位置，git-ignored）
 └── docs/                     # 專案文件（架構、ADR）
 ```

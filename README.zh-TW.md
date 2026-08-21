@@ -27,6 +27,7 @@
 - **PDF 前置偵測** — 轉換前由 [pdf-inspector](https://github.com/firecrawl/pdf-inspector) 以毫秒級分析 PDF 結構，偵測掃描件與不可解碼的文字層（如 CID 字型缺 ToUnicode CMap），事先選對 OCR 模式，不再試錯重啟
 - **手動指定** — 使用 `--ocr` 或 `--pdf` 強制指定工具。對 `.pdf` 使用 `--ocr` 時走 hybrid `--force-ocr`（EasyOCR 不能讀 PDF）
 - **使用者掌控** — Skill 模式下，由你決定是否讓 Claude 讀取結果
+- **選配表格驗證** — PDF 轉換後可用 surya v2 在本機重讀表格區域，標記與轉換輸出不一致的數字，不會自動修改
 - **多語言支援** — 預設繁體中文 + 英文，兩個工具都支援 80+ 種語言
 
 ## 範例輸出
@@ -202,11 +203,9 @@ Revelio 起始於 2026 年初，原本只是一個本地 EasyOCR 的封裝，用
 revelio/
 ├── src/
 │   ├── mcp-server/      # EasyOCR MCP server
-│   │   ├── server.py
-│   │   ├── ocr_to_file.py
-│   │   └── pyproject.toml
-│   └── skill/           # /revelio skill（路由至 OCR 或 PDF 工具）
-│       └── SKILL.md
+│   ├── skill/           # /revelio skill（路由至 OCR 或 PDF 工具）
+│   └── table-verify/    # 選配表格數字驗證（surya v2）
+├── benchmark/           # 回歸套件（PDF fixture 不進 git）
 ├── ocr_results/         # EasyOCR 輸出（不納入 git）
 └── docs/                # 文件（架構、ADR）
 ```
@@ -230,7 +229,7 @@ revelio/
 
 ## 歷程
 
-- **2026-08** — 新增 PDF 前置偵測（[pdf-inspector](https://github.com/firecrawl/pdf-inspector)）：skill 改以毫秒級結構分析決定 force-OCR 模式，取代檔名猜測與試錯重啟。見 [ADR-004](docs/decisions/004-pdf-preflight-detection.md)。
+- **2026-08** — 0.6.1：回歸 benchmark、選配 surya 表格驗證、OCR helper 硬化。0.6.0 新增 PDF 前置偵測（[pdf-inspector](https://github.com/firecrawl/pdf-inspector)）。見 [ADR-004](docs/decisions/004-pdf-preflight-detection.md)。
 - **2026-04** — 整合 PDF 處理功能（opendataloader-pdf）；skill 從 `/ocr-local` 改名為 `/revelio`，MCP server 從 `easyocr` 改名為 `revelio`
 - **2026-02** — 曾嘗試向 [WindoC/easyocr-mcp](https://github.com/WindoC/easyocr-mcp) 提交 upstream 貢獻（討論停滯）。[Clementtang/easyocr-mcp fork](https://github.com/Clementtang/easyocr-mcp) 已封存，Revelio 自行維護 MCP server 實作。詳見 [ADR-002](docs/decisions/002-memory-management-strategy.md)。
 
